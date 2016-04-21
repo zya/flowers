@@ -1,0 +1,25 @@
+{
+  "name": "melt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "colorformat": "^1.2.3",
+    "lerp": "^1.0.3",
+    "lodash": "^4.11.1",
+    "random-float": "^1.0.0",
+    "random-int": "^1.0.0",
+    "simplex-noise": "^2.2.0"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "watchify": "^3.7.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "watchify index.js -o ./build/bundle.js",
+    "build": "browserify index.js -o ./build/bundle.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
