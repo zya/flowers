@@ -9,10 +9,12 @@ var simplex = new SimplexNoise();
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var image = document.getElementById('image');
+image.src = '2-3.jpg';
 
 var redPixels = new Image();
 var greenPixels = new Image();
 var yellowPixels = new Image();
+var darkPixels = new Image();
 
 var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.8 : window.innerWidth / 1.3;
 var h = w;
@@ -21,6 +23,10 @@ canvas.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (50) + 'px';
 
 canvas.width = w;
 canvas.height = w;
+
+function between(x, min, max) {
+  return x >= min && x <= max;
+}
 var t = 0;
 var randoms = [];
 
@@ -69,13 +75,13 @@ function pickPoints(number) {
   return randoms;
 }
 
-image.onload = function() {
-  ctx.drawImage(image, 0, 0, w, w);
-
+function initialiseChannels() {
   var imageData = ctx.getImageData(0, 0, w, w);
   var data1 = new Uint8ClampedArray(imageData.data);
   var data2 = new Uint8ClampedArray(imageData.data);
   var data3 = new Uint8ClampedArray(imageData.data);
+  var data4 = new Uint8ClampedArray(imageData.data);
+
   var redImageData = ctx.createImageData(imageData);
   redImageData.data.set(data1);
 
@@ -85,8 +91,17 @@ image.onload = function() {
   var yellowImageData = ctx.createImageData(imageData);
   yellowImageData.data.set(data3);
 
+  var darkImageData = ctx.createImageData(imageData);
+  darkImageData.data.set(data4);
+
   for (var i = 0; i < redImageData.data.length; i += 4) {
-    var isRed = redImageData.data[i] > 212 && redImageData.data[i + 2] < 140;
+    var r = imageData.data[i];
+    var g = imageData.data[i + 1];
+    var b = imageData.data[i + 2];
+    var a = imageData.data[i + 3];
+
+    // var isRed = redImageData.data[i] > 212 && redImageData.data[i + 2] < 140;
+    var isRed = between(r, 190, 255) && between(g, 0, 130) && randomF(0, 10) > 9.5;
     if (!isRed) {
       redImageData.data[i] = 0;
       redImageData.data[i + 1] = 0;
@@ -94,7 +109,8 @@ image.onload = function() {
       redImageData.data[i + 3] = 0;
     }
 
-    var isGreen = greenImageData.data[i + 1] > 190 && greenImageData.data[i + 2] > 150;
+    // var isGreen = greenImageData.data[i + 1] > 190 && greenImageData.data[i + 2] > 150;
+    var isGreen = between(g, 120, 255) && between(b, 110, 255) && randomF(0, 10) > 3;
     if (!isGreen) {
       greenImageData.data[i] = 0;
       greenImageData.data[i + 1] = 0;
@@ -102,16 +118,25 @@ image.onload = function() {
       greenImageData.data[i + 3] = 0;
     }
 
-    var isYellow = greenImageData.data[i] < 10 && greenImageData.data[i + 1] < 10 && greenImageData.data[i + 2] < 10;
+    // var isYellow = greenImageData.data[i] < 10 && greenImageData.data[i + 1] < 10 && greenImageData.data[i + 2] < 10;
+    var isYellow = between(g, 220, 230) && between(b, 220, 230) && randomF(0, 20) > 19;
     if (!isYellow) {
       yellowImageData.data[i] = 0;
       yellowImageData.data[i + 1] = 0;
       yellowImageData.data[i + 2] = 0;
       yellowImageData.data[i + 3] = 0;
     }
+
+    var isDark = between(r, 0, 13) && between(g, 0, 13) && between(b, 0, 13) && randomF(0, 10) > 7;
+    if (!isDark) {
+      darkImageData.data[i] = 0;
+      darkImageData.data[i + 1] = 0;
+      darkImageData.data[i + 2] = 0;
+      darkImageData.data[i + 3] = 0;
+    }
   }
 
-  randoms = pickPoints(300);
+  // randoms = pickPoints(300);
 
   ctx.putImageData(redImageData, 0, 0);
   // redPixels.imageData.set(redImageData);
@@ -128,20 +153,34 @@ image.onload = function() {
   // redPixels.imageData.set(redImageData);
   yellowPixels.src = canvas.toDataURL('image/png');
 
+  ctx.clearRect(0, 0, w, w);
+  ctx.putImageData(darkImageData, 0, 0);
+  // redPixels.imageData.set(redImageData);
+  darkPixels.src = canvas.toDataURL('image/png');
+}
+
+image.onload = function() {
+  ctx.drawImage(image, 0, 0, w, w);
+  initialiseChannels();
   render();
 };
+
+var startTime = Date.now();
 
 canvas.addEventListener('click', function() {
   ctx.globalAlpha = 1;
   ctx.drawImage(image, 0, 0, w, w);
+
   time = 0;
   start = start ? false : true;
-  randoms = pickPoints(300);
-  render();
+
+  if (!start) initialiseChannels();
+  // randoms = pickPoints(300);
+  startTime = Date.now();
 });
 
-
 function render(timestamp) {
+  var p = ((Date.now() - startTime) / 1000) * 10;
   if (time === 0) {
     ctx.drawImage(image, 0, 0, w, w);
   }
@@ -149,15 +188,18 @@ function render(timestamp) {
   if (start) {
     time++;
   }
-  var progress = time / 50;
-  var n = simplex.noise2D(random.x, random.y);
+  var progress = time / 20;
+  var n = simplex.noise2D(progress, random.y);
 
-  if (progress < 40) {
-    ctx.globalAlpha = 0.5;
-    ctx.drawImage(redPixels, 0, progress, w, w);
-    ctx.drawImage(greenPixels, 0, progress * -1, w, w);
-    // ctx.globalAlpha = 0.1;
-    // ctx.drawImage(yellowPixels, n, progress * 0.9, w, w);
+  if (p < 150) {
+    ctx.globalAlpha = randomF(0, 0.4);
+    ctx.drawImage(greenPixels, 0, (p / 3), w, w);
+    ctx.globalAlpha = randomF(0, 0.2);
+    ctx.drawImage(yellowPixels, n + randomF(-1, 1), (p / 2), w, w);
+    ctx.globalAlpha = randomF(0, 0.9);
+    ctx.drawImage(redPixels, n + randomF(-1, 1), p + randomF(0, 1), w, w);
+    ctx.globalAlpha = randomF(0, 0.9);
+    ctx.drawImage(darkPixels, n + randomF(-1, 1), p, w, w);
   }
 
   if (start) {
@@ -180,10 +222,10 @@ function render(timestamp) {
     });
   }
 
-  ctx.font = '25px Helvetica';
+  ctx.globalAlpha = 1.0;
+  ctx.font = 'Bold ' + (w / 15) + 'px Helvetica';
   ctx.fillStyle = 'black';
   ctx.textAlign = 'center';
-  ctx.globalAlpha = 1.0;
-  ctx.fillText('FLOWERS', w / 2, w / 2);
+  ctx.fillText('FLOWERS', w / 2, (w / 2) + 4);
   requestAnimationFrame(render);
 }
