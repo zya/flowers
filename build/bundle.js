@@ -18,6 +18,8 @@ var yellowPixels = new Image();
 var darkPixels = new Image();
 var text = new Image();
 text.src = 'text.png';
+var textFarsi = new Image();
+textFarsi.src = 'text-farsi.png';
 
 var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.2 : window.innerWidth / 1.1;
 var h = w;
@@ -83,7 +85,7 @@ function initialiseChannels() {
       yellowImageData.data[i + 3] = 0;
     }
 
-    var isDark = between(r, 0, 13) && between(g, 0, 13) && between(b, 0, 13) && randomF(0, 10) > 5;
+    var isDark = between(r, 0, 13) && between(g, 0, 13) && between(b, 0, 13) && randomF(0, 10) > 6;
     if (!isDark) {
       darkImageData.data[i] = 0;
       darkImageData.data[i + 1] = 0;
@@ -155,17 +157,18 @@ function render(timestamp) {
   ctx.globalAlpha = 1.0;
 
   var unit = w / 20;
-  var textSize = unit * 8;
-  var x = unit * 6;
-  var y = unit * 6 - 20;
+  var textSize = unit * 6;
+  var x = unit * 7;
+  var y = unit * 7 - 20;
   if (start) {
     x += randomF(-1, 1);
     y += randomF(-1, 1);
     ctx.globalAlpha = randomF(0.3, 0.8);
   }
   ctx.textBaseline = 'middle';
-  // ctx.fillText('FLOWERS', x, y);
+  // ctx.fillText('FLOWERS', x, y);)
   ctx.drawImage(text, x, y, textSize, textSize);
+  // ctx.drawImage(textFarsi, x, y + (unit * 1.5), textSize, textSize);
   requestAnimationFrame(render);
 }
 },{"colorformat":2,"lerp":3,"lodash":4,"random-float":5,"random-int":6,"simplex-noise":7}],2:[function(require,module,exports){
