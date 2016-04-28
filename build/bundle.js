@@ -192,7 +192,7 @@ function render(timestamp) {
   var progress = time / 20;
   var n = simplex.noise2D(progress, random.y);
 
-  if (p < 150) {
+  if (p < 150 && start) {
     ctx.globalAlpha = randomF(0, 0.4);
     ctx.drawImage(greenPixels, 0, (p / 3), w, w);
     ctx.globalAlpha = randomF(0, 0.2);
@@ -230,6 +230,7 @@ function render(timestamp) {
   ctx.fillText('FLOWERS', w / 2, (w / 2) + 4);
   requestAnimationFrame(render);
 }
+
 },{"colorformat":2,"lerp":3,"lodash":4,"random-float":5,"random-int":6,"simplex-noise":7}],2:[function(require,module,exports){
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {

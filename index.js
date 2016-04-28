@@ -191,7 +191,7 @@ function render(timestamp) {
   var progress = time / 20;
   var n = simplex.noise2D(progress, random.y);
 
-  if (p < 150) {
+  if (p < 150 && start) {
     ctx.globalAlpha = randomF(0, 0.4);
     ctx.drawImage(greenPixels, 0, (p / 3), w, w);
     ctx.globalAlpha = randomF(0, 0.2);
