@@ -9,16 +9,14 @@ var simplex = new SimplexNoise();
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var image = document.getElementById('image');
-image.src = '2-3.jpg';
+image.src = './assets/flowers.png';
 
 var redPixels = new Image();
 var greenPixels = new Image();
 var yellowPixels = new Image();
 var darkPixels = new Image();
 var text = new Image();
-text.src = 'text.png';
-var textFarsi = new Image();
-textFarsi.src = 'text-farsi.png';
+text.src = './assets/text.png';
 
 var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.2 : window.innerWidth / 1.1;
 var h = w;
@@ -165,8 +163,6 @@ function render(timestamp) {
     ctx.globalAlpha = randomF(0.3, 0.8);
   }
   ctx.textBaseline = 'middle';
-  // ctx.fillText('FLOWERS', x, y);)
   ctx.drawImage(text, x, y, textSize, textSize);
-  // ctx.drawImage(textFarsi, x, y + (unit * 1.5), textSize, textSize);
   requestAnimationFrame(render);
 }
