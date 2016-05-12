@@ -13,7 +13,8 @@
   },
   "devDependencies": {
     "browserify": "^13.0.0",
-    "watchify": "^3.7.0"
+    "watchify": "^3.7.0",
+    "update-pages": "git checkout gh-pages && git rebase master && git push origin gh-pages && git checkout master"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
