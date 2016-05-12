@@ -1,6 +1,7 @@
 'use strict';
 
 var random = require('random-int');
+var bowser = require('bowser');
 var randomF = require('random-float');
 var SimplexNoise = require('simplex-noise');
 
@@ -173,16 +174,25 @@ canvas.addEventListener('click', function () {
   start = start ? false : true;
 
   if (!start) {
-    spin.style.opacity = 1.0;
-    setTimeout(function () {
+    if (bowser.mobile || bowser.tablet) {
+      spin.style.opacity = 1.0;
+      setTimeout(function () {
+        var ran = random(0, 10);
+        image = images[ran > 5 ? 0 : 1];
+        ctx.drawImage(image, 0, 0, w, w);
+        drawText();
+        setTimeout(initialiseChannels, 20);
+        spin.style.opacity = 0.0;
+        ctx.drawImage(image, 0, 0, w, w);
+      }, 50);
+    } else {
       var ran = random(0, 10);
       image = images[ran > 5 ? 0 : 1];
       ctx.drawImage(image, 0, 0, w, w);
       drawText();
-      setTimeout(initialiseChannels, 20);
-      spin.style.opacity = 0.0;
-    }, 50);
-    ctx.drawImage(image, 0, 0, w, w);
+      initialiseChannels();
+      ctx.drawImage(image, 0, 0, w, w);
+    }
   }
   startTime = Date.now();
 });

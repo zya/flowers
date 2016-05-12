@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "bowser": "^1.2.0",
     "colorformat": "^1.2.3",
     "lerp": "^1.0.3",
     "lodash": "^4.11.1",
