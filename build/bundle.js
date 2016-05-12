@@ -16,7 +16,7 @@ image2.src = './assets/flowers-05.png';
 
 var images = [image1, image2];
 
-var image = images[random(0, 1)];
+var image = new Image();
 
 var redPixels = new Image();
 var redPixels2 = new Image();
@@ -43,7 +43,6 @@ function between(x, min, max) {
 }
 
 function initialiseChannels() {
-
   ctx.globalAlpha = 1;
   ctx.drawImage(image, 0, 0, w, w);
 
@@ -158,13 +157,16 @@ function initialiseChannels() {
 }
 
 image.onload = function () {
-  var ran = random(0, 1);
-  image = images[ran > 5 ? 0 : 1];
+
   ctx.drawImage(image, 0, 0, w, w);
   initialiseChannels();
   ctx.drawImage(image, 0, 0, w, w);
   render();
 };
+
+var ran = random(0, 10);
+var src = images[ran > 5 ? 0 : 1].src;
+image.src = src;
 
 var startTime = Date.now();
 
@@ -173,7 +175,11 @@ canvas.addEventListener('click', function () {
   start = start ? false : true;
   var ran = random(0, 10);
   image = images[ran > 5 ? 0 : 1];
-  if (!start) initialiseChannels();
+  if (!start) {
+    ctx.drawImage(image, 0, 0, w, w);
+    initialiseChannels();
+    ctx.drawImage(image, 0, 0, w, w);
+  }
   startTime = Date.now();
 });
 
