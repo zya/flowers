@@ -1,9 +1,8 @@
+'use strict';
+
 var random = require('random-int');
 var randomF = require('random-float');
 var SimplexNoise = require('simplex-noise');
-var lerp = require('lerp');
-var colorformat = require('colorformat');
-var _ = require('lodash');
 
 var simplex = new SimplexNoise();
 var canvas = document.getElementById('canvas');
@@ -26,9 +25,10 @@ var darkPixels = new Image();
 var text = new Image();
 text.src = './assets/text.png';
 
+var spin = document.getElementById('spin');
+spin.style.opacity = 0.0;
+
 var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.2 : window.innerWidth / 1.1;
-var h = w;
-var t = 0;
 var start = false;
 var time = 0;
 
@@ -75,7 +75,6 @@ function initialiseChannels() {
     var r = imageData.data[i];
     var g = imageData.data[i + 1];
     var b = imageData.data[i + 2];
-    var a = imageData.data[i + 3];
 
     var isRed = between(r, 190, 255) && between(g, 0, 130) && randomF(0, 10) > 9.5;
 
@@ -156,8 +155,8 @@ function initialiseChannels() {
 }
 
 image.onload = function () {
-
   ctx.drawImage(image, 0, 0, w, w);
+  drawText();
   initialiseChannels();
   ctx.drawImage(image, 0, 0, w, w);
   render();
@@ -172,17 +171,38 @@ var startTime = Date.now();
 canvas.addEventListener('click', function () {
   time = 0;
   start = start ? false : true;
-  var ran = random(0, 10);
-  image = images[ran > 5 ? 0 : 1];
+
   if (!start) {
-    ctx.drawImage(image, 0, 0, w, w);
-    initialiseChannels();
+    spin.style.opacity = 1.0;
+    setTimeout(function () {
+      var ran = random(0, 10);
+      image = images[ran > 5 ? 0 : 1];
+      ctx.drawImage(image, 0, 0, w, w);
+      drawText();
+      setTimeout(initialiseChannels, 20);
+      spin.style.opacity = 0.0;
+    }, 50);
     ctx.drawImage(image, 0, 0, w, w);
   }
   startTime = Date.now();
 });
 
-function render(timestamp) {
+function drawText() {
+  var unit = w / 20;
+  var textSize = unit * 6;
+  var x = unit * 7;
+  var y = unit * 7 - 17;
+  if (start) {
+    x += randomF(-1, 1);
+    y += randomF(-1, 1);
+    ctx.globalAlpha = randomF(0.3, 0.8);
+  } else {
+    ctx.globalAlpha = 1;
+  }
+  ctx.drawImage(text, x, y, textSize, textSize);
+}
+
+function render() {
   var p = ((Date.now() - startTime) / 1000) * 10;
 
   if (start) {
@@ -207,18 +227,9 @@ function render(timestamp) {
     ctx.globalAlpha = randomF(0.2, 0.3);
     ctx.drawImage(darkPixels, n + randomF(-1, 1), p, w, w);
   } else {
-    start = false;
+    time = 0;
   }
 
-  var unit = w / 20;
-  var textSize = unit * 6;
-  var x = unit * 7;
-  var y = unit * 7 - 17;
-  if (start) {
-    x += randomF(-1, 1);
-    y += randomF(-1, 1);
-    ctx.globalAlpha = randomF(0.3, 0.8);
-  }
-  ctx.drawImage(text, x, y, textSize, textSize);
+  drawText();
   requestAnimationFrame(render);
 }
