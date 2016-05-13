@@ -10,15 +10,47 @@
         margin: 0;
         text-align: center;
         background-color: #1a1a1a;
+        overflow: hidden;
+        color: white;
       }
       #canvas {
         cursor: pointer;
       }
       i {
         color: white;
-        /*-webkit-transition: opacity 0.5s;*/
-        /*transition: opacity 0.5s;*/
       }
+
+      i:hover {
+        cursor: pointer;
+      }
+
+      #spin {
+        margin-top: 20px;
+        display: none;
+      }
+
+      #text {
+        font-family: Helvetica;
+        display: inline-block;
+        margin-top: 5px;
+      }
+      #screen {
+        display: none;
+      }
+
+      a {
+        text-decoration: none;
+        color: white;
+      }
+
+      a:visited {
+        color: white;
+      }
+
+      .icon:hover{
+        color: grey;
+      }
+
     </style>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css">
 </head>
@@ -28,9 +60,17 @@
         <img id="image" src="./assets/flowers.png">
         <img id="image2" src="./assets/flowers-02.png">
     </div>
+    <a id="screen"></a>
+    <i class="fa fa-cog fa-2x fa-spin" id="spin" aria-hidden="true"></i>
+    <br>
     <canvas id="canvas"></canvas>
     <br><br>
-    <i class="fa fa-cog fa-2x fa-spin" id="spin" aria-hidden="true"></i>
+    <div id="text">
+      <i class="fa fa-floppy-o fa-2x icon" aria-hidden="true" id="save" title="Download Cover Art"></i>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <a class="fa fa-soundcloud fa-2x icon" aria-hidden="true" title="Listen To The EP" href="http://soundcloud/divarrecords"></a>
+    </div>
+    <br><br>
 </body>
 <script src="./build/bundle.js"></script>
 </html>

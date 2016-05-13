@@ -14,6 +14,8 @@ image1.src = './assets/flowers.png';
 var image2 = document.getElementById('image2');
 image2.src = './assets/flowers-05.png';
 
+var isMobileOrTablet = bowser.mobile || bowser.tablet;
+
 var images = [image1, image2];
 
 var image = new Image();
@@ -34,7 +36,7 @@ var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.2 : windo
 var start = false;
 var time = 0;
 
-canvas.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 29) + 'px';
+canvas.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 15) + 'px';
 
 canvas.width = w;
 canvas.height = w;
@@ -164,31 +166,35 @@ image.onload = function () {
   render();
 };
 
-var ran = random(0, 10);
-var src = images[ran > 5 ? 0 : 1].src;
+var src = images[random(0, images.length - 1)].src;
 image.src = src;
 
 var startTime = Date.now();
+
+if (isMobileOrTablet) {
+  spin.style.display = 'block';
+  canvas.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 9) + 'px';
+}
 
 canvas.addEventListener('click', function () {
   time = 0;
   start = start ? false : true;
 
   if (!start) {
-    if (bowser.mobile || bowser.tablet) {
+    if (isMobileOrTablet) {
       spin.style.opacity = 1.0;
       setTimeout(function () {
-        var ran = random(0, 10);
-        image = images[ran > 5 ? 0 : 1];
+        var r = random(0, images.length - 1);
+        image = images[r];
         ctx.drawImage(image, 0, 0, w, w);
         drawText();
         setTimeout(initialiseChannels, 20);
-        spin.style.opacity = 0.0;
         ctx.drawImage(image, 0, 0, w, w);
+        spin.style.opacity = 0.0;
       }, 50);
     } else {
-      var ran = random(0, 10);
-      image = images[ran > 5 ? 0 : 1];
+      var r = random(0, images.length - 1);
+      image = images[r];
       ctx.drawImage(image, 0, 0, w, w);
       drawText();
       initialiseChannels();
@@ -213,6 +219,19 @@ function drawText() {
   ctx.drawImage(text, x, y, textSize, textSize);
 }
 
+function screenshot(canvas) {
+  var link = document.getElementById('screen');
+  var img = canvas.toDataURL('image/jpeg');
+  link.href = img;
+  link.target = "_blank";
+  link.download = "Ehsan Ziya - FLOWERS.jpg";
+  link.click();
+}
+
+document.getElementById('save').addEventListener('click', function () {
+  screenshot(canvas);
+});
+
 function render() {
   var p = ((Date.now() - startTime) / 1000) * 10;
 
@@ -222,18 +241,18 @@ function render() {
   var progress = time / 20;
   var n = simplex.noise2D(progress, random.y);
 
-  if (p < 150 && start) {
+  if (p < 95 && start) {
     ctx.globalAlpha = randomF(0.0, 0.1);
     ctx.drawImage(greenPixels, 0 + randomF(-1.5, 1.5), (p / 7) + n, w, w);
     ctx.globalAlpha = randomF(0.0, 0.1);
     ctx.drawImage(veryGreenPixels, 0 + randomF(-5, 5), (p / 9) + n, w, w);
     ctx.globalAlpha = randomF(0.0, 0.3);
     ctx.drawImage(yellowPixels, n + randomF(-1, 1), (p / 2), w, w);
-    ctx.globalAlpha = randomF(0.0, 0.1);
+    ctx.globalAlpha = randomF(0.0, 0.2);
     ctx.drawImage(yellowPixels, 0, 0, w, w);
     ctx.globalAlpha = randomF(0.1, 0.6);
     ctx.drawImage(redPixels, randomF(-1, 1), p + randomF(0, 1), w, w);
-    ctx.globalAlpha = randomF(0.1, 0.5);
+    ctx.globalAlpha = randomF(0.1, 0.8);
     ctx.drawImage(redPixels2, 0, p / 5, w, w);
     ctx.globalAlpha = randomF(0.2, 0.3);
     ctx.drawImage(darkPixels, n + randomF(-1, 1), p, w, w);
