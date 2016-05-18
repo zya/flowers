@@ -10,7 +10,6 @@
         margin: 0;
         text-align: center;
         background-color: #1a1a1a;
-        overflow: hidden;
         color: white;
       }
       #canvas {
@@ -19,12 +18,13 @@
 
       #spin {
         margin-top: 20px;
-        display: none;
-        color: white;
-        font-size: 7vmin;
+        color: #FAFAFA;
+        font-size: 3.5vw;
         position: fixed;
+        opacity: 1;
         top: 50px;
-        left: 50%;
+        left: 49vw;
+        transition: opacity 300ms;
       }
 
       #text {
@@ -38,15 +38,15 @@
 
       a {
         text-decoration: none;
-        color: white;
+        color: #FAFAFA;
       }
 
       a:visited {
-        color: white;
+        color: #FAFAFA;
       }
 
       .black:before {
-        color: white;
+        color: #FAFAFA;
       }
 
       .icon {
@@ -65,16 +65,18 @@
         text-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
       }
 
-      /* Portrait and Landscape */
       @media only screen
         and (min-device-width: 320px)
         and (max-device-width: 568px)
         and (-webkit-min-device-pixel-ratio: 2) {
           #icons {
-            margin-top: 2vh;
+            margin-top: 6vh;
           }
           .icon {
             font-size: 7vmin;
+          }
+          #spin {
+            font-size: 5vw;
           }
       }
 

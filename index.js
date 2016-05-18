@@ -33,7 +33,7 @@ var mouseY = 0;
 text.src = './assets/text.png';
 
 var spin = document.getElementById('spin');
-spin.style.opacity = 0.0;
+spin.style.opacity = 1.0;
 
 var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.2 : window.innerWidth / 1.02;
 var start = false;
@@ -192,6 +192,7 @@ function initialiseChannels() {
 }
 
 image.onload = function () {
+  spin.style.opacity = 0.0;
   ctx.drawImage(image, 0, 0, w, w);
   drawText();
   initialiseChannels();
@@ -237,7 +238,9 @@ canvas.addEventListener('click', function () {
       drawText();
       setTimeout(initialiseChannels, 20);
       ctx.drawImage(image, 0, 0, w, w);
-      spin.style.opacity = 0.0;
+      setTimeout(function () {
+        spin.style.opacity = 0.0;
+      }, 200);
     }, 50);
 
   } else if (!melting && (clicks % 3) === 0) {
@@ -256,6 +259,7 @@ canvas.addEventListener('mousemove', function (e) {
 
 canvas.addEventListener('touchmove', function (e) {
   mouseX = e.touches[0].clientX - e.target.offsetLeft - 1;
+  e.preventDefault();
 });
 
 function drawText() {
