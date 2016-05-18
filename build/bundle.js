@@ -38,6 +38,7 @@ var time = 0;
 var paused = true;
 var melting = false;
 var shouldChange = false;
+var currentImageIndex = 0;
 
 canvas.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 15) + 'px';
 
@@ -169,7 +170,7 @@ image.onload = function() {
   render();
 };
 
-var src = images[0].src;
+var src = images[currentImageIndex].src;
 image.src = src;
 
 var startTime = Date.now();
@@ -180,8 +181,9 @@ if (isMobileOrTablet) {
 }
 
 function randomiseImage(images) {
-  var r = random(0, images.length - 1);
-  return images[r];
+  var index = currentImageIndex === 0 ? 1 : 0;
+  currentImageIndex = index;
+  return images[index];
 }
 
 canvas.addEventListener('click', function() {
