@@ -25,6 +25,8 @@ var greenPixels = new Image();
 var veryGreenPixels = new Image();
 var yellowPixels = new Image();
 var darkPixels = new Image();
+var bluePixels = new Image();
+
 var text = new Image();
 var mouseX = 0;
 text.src = './assets/text.png';
@@ -61,12 +63,16 @@ function initialiseChannels() {
   var data4 = new Uint8ClampedArray(imageData.data);
   var data5 = new Uint8ClampedArray(imageData.data);
   var data6 = new Uint8ClampedArray(imageData.data);
+  var data7 = new Uint8ClampedArray(imageData.data);
 
   var redImageData = ctx.createImageData(imageData);
   redImageData.data.set(data1);
 
   var redImageData2 = ctx.createImageData(imageData);
   redImageData2.data.set(data5);
+
+  var blueImageData2 = ctx.createImageData(imageData);
+  redImageData2.data.set(data7);
 
   var greenImageData = ctx.createImageData(imageData);
   greenImageData.data.set(data2);
@@ -101,7 +107,20 @@ function initialiseChannels() {
       redImageData2.data[i + 1] = 0;
       redImageData2.data[i + 2] = 0;
       redImageData2.data[i + 3] = 0;
+
+      blueImageData2.data[i] = 0;
+      blueImageData2.data[i + 1] = 0;
+      blueImageData2.data[i + 2] = 0;
+      blueImageData2.data[i + 3] = 0;
+    } else {
+
+      blueImageData2.data[i] = random(0, 50);
+      blueImageData2.data[i + 1] = random(0, 50);
+      blueImageData2.data[i + 2] = random(150, 150);
+      blueImageData2.data[i + 3] = 50;
     }
+
+
 
     var isGreen = between(g, 120, 255) && between(b, 110, 230) && randomF(0, 10) > 3;
     if (!isGreen) {
@@ -158,6 +177,10 @@ function initialiseChannels() {
   ctx.clearRect(0, 0, w, w);
   ctx.putImageData(darkImageData, 0, 0);
   darkPixels.src = canvas.toDataURL('image/png');
+
+  ctx.clearRect(0, 0, w, w);
+  ctx.putImageData(blueImageData2, 0, 0);
+  bluePixels.src = canvas.toDataURL('image/png');
 
   ctx.clearRect(0, 0, w, w);
   ctx.drawImage(image, 0, 0, w, w);
@@ -282,6 +305,9 @@ function melt(p, n) {
 
   ctx.globalAlpha = randomF(0.2, 0.3);
   ctx.drawImage(darkPixels, n + randomF(-1, 1) + (mouseX / (w / randomF(2, 5))), p, w, w);
+
+  ctx.globalAlpha = (p / 120) / 5;
+  ctx.drawImage(bluePixels, 0, (p / 3) + n + randomF(0, 10), w, w);
 }
 
 document.getElementById('save').addEventListener('click', function() {
