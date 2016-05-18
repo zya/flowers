@@ -34,6 +34,9 @@ spin.style.opacity = 0.0;
 var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.2 : window.innerWidth / 1.1;
 var start = false;
 var time = 0;
+var paused = true;
+var melting = false;
+var shouldChange = false;
 
 canvas.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 15) + 'px';
 
@@ -157,7 +160,7 @@ function initialiseChannels() {
   ctx.drawImage(image, 0, 0, w, w);
 }
 
-image.onload = function () {
+image.onload = function() {
   ctx.drawImage(image, 0, 0, w, w);
   drawText();
   initialiseChannels();
@@ -165,7 +168,7 @@ image.onload = function () {
   render();
 };
 
-var src = images[random(0, images.length - 1)].src;
+var src = images[0].src;
 image.src = src;
 
 var startTime = Date.now();
@@ -175,32 +178,51 @@ if (isMobileOrTablet) {
   canvas.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 9) + 'px';
 }
 
-canvas.addEventListener('click', function () {
-  time = 0;
-  start = start ? false : true;
+function randomiseImage(images) {
+  var r = random(0, images.length - 1);
+  return images[r];
+}
 
-  if (!start) {
-    if (isMobileOrTablet) {
-      spin.style.opacity = 1.0;
-      setTimeout(function () {
-        var r = random(0, images.length - 1);
-        image = images[r];
-        ctx.drawImage(image, 0, 0, w, w);
-        drawText();
-        setTimeout(initialiseChannels, 20);
-        ctx.drawImage(image, 0, 0, w, w);
-        spin.style.opacity = 0.0;
-      }, 50);
-    } else {
-      var r = random(0, images.length - 1);
-      image = images[r];
+canvas.addEventListener('click', function() {
+  time = 0;
+
+  startTime = Date.now();
+
+  if (melting) {
+    paused = true;
+    start = false;
+  } else {
+    paused = false;
+    start = true;
+  }
+
+  if (isMobileOrTablet && !melting) {
+    spin.style.opacity = 1.0;
+    setTimeout(function() {
+      if (shouldChange) {
+        image = randomiseImage(images);
+      } else {
+        shouldChange = true;
+      }
       ctx.drawImage(image, 0, 0, w, w);
       drawText();
-      initialiseChannels();
+      setTimeout(initialiseChannels, 20);
       ctx.drawImage(image, 0, 0, w, w);
+      spin.style.opacity = 0.0;
+    }, 50);
+  } else if (!melting) {
+    if (shouldChange) {
+      image = randomiseImage(images);
+    } else {
+      shouldChange = true;
     }
+    ctx.drawImage(image, 0, 0, w, w);
+    drawText();
+    initialiseChannels();
+    ctx.drawImage(image, 0, 0, w, w);
+  } else {
+    start = true;
   }
-  startTime = Date.now();
 });
 
 function drawText() {
@@ -227,36 +249,43 @@ function screenshot(canvas) {
   link.click();
 }
 
-document.getElementById('save').addEventListener('click', function () {
+function melt(p, n) {
+  ctx.globalAlpha = randomF(0.0, 0.1);
+  ctx.drawImage(greenPixels, 0 + randomF(-1.5, 1.5), (p / 7) + n, w, w);
+  ctx.globalAlpha = randomF(0.0, 0.1);
+  ctx.drawImage(veryGreenPixels, 0 + randomF(-5, 5), (p / 9) + n, w, w);
+  ctx.globalAlpha = randomF(0.0, 0.3);
+  ctx.drawImage(yellowPixels, n + randomF(-1, 1), (p / 2), w, w);
+  ctx.globalAlpha = randomF(0.0, 0.2);
+  ctx.drawImage(yellowPixels, 0, 0, w, w);
+  ctx.globalAlpha = randomF(0.1, 0.6);
+  ctx.drawImage(redPixels, randomF(-1, 1), p + randomF(0, 1), w, w);
+  ctx.globalAlpha = randomF(0.1, 0.8);
+  ctx.drawImage(redPixels2, 0, p / 5, w, w);
+  ctx.globalAlpha = randomF(0.2, 0.3);
+  ctx.drawImage(darkPixels, n + randomF(-1, 1), p, w, w);
+}
+
+document.getElementById('save').addEventListener('click', function() {
   screenshot(canvas);
 });
 
 function render() {
   var p = ((Date.now() - startTime) / 1000) * 10;
 
-  if (start) {
+  if (!paused && start) {
     time++;
   }
+
   var progress = time / 20;
   var n = simplex.noise2D(progress, random.y);
 
-  if (p < 95 && start) {
-    ctx.globalAlpha = randomF(0.0, 0.1);
-    ctx.drawImage(greenPixels, 0 + randomF(-1.5, 1.5), (p / 7) + n, w, w);
-    ctx.globalAlpha = randomF(0.0, 0.1);
-    ctx.drawImage(veryGreenPixels, 0 + randomF(-5, 5), (p / 9) + n, w, w);
-    ctx.globalAlpha = randomF(0.0, 0.3);
-    ctx.drawImage(yellowPixels, n + randomF(-1, 1), (p / 2), w, w);
-    ctx.globalAlpha = randomF(0.0, 0.2);
-    ctx.drawImage(yellowPixels, 0, 0, w, w);
-    ctx.globalAlpha = randomF(0.1, 0.6);
-    ctx.drawImage(redPixels, randomF(-1, 1), p + randomF(0, 1), w, w);
-    ctx.globalAlpha = randomF(0.1, 0.8);
-    ctx.drawImage(redPixels2, 0, p / 5, w, w);
-    ctx.globalAlpha = randomF(0.2, 0.3);
-    ctx.drawImage(darkPixels, n + randomF(-1, 1), p, w, w);
+  if (p < 95 && !paused && start) {
+    melting = true;
+    console.log('rendering', time);
+    melt(p, n);
   } else {
-    time = 0;
+    melting = false;
   }
 
   drawText();
