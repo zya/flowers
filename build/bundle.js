@@ -30,21 +30,24 @@ var bluePixels = new Image();
 
 var text = new Image();
 var mouseX = 0;
+var mouseY = 0;
 text.src = './assets/text.png';
 
 var spin = document.getElementById('spin');
 spin.style.opacity = 0.0;
 
-var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.2 : window.innerWidth / 1.1;
+var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.2 : window.innerWidth / 1.02;
 var start = false;
 var time = 0;
 var paused = true;
 var melting = false;
-var shouldChange = false;
 var currentImageIndex = 0;
-var meltSpeed = 16;
+var meltSpeed = 13;
+var maxProgress = 130;
 
-canvas.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 15) + 'px';
+var clicks = 0;
+
+canvas.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 21) + 'px';
 
 canvas.width = w;
 canvas.height = w;
@@ -92,7 +95,7 @@ function initialiseChannels() {
     var g = imageData.data[i + 1];
     var b = imageData.data[i + 2];
 
-    var isRed = between(r, 190, 255) && between(g, 0, 130) && randomF(0, 10) > 9.3;
+    var isRed = between(r, 190, 255) && between(g, 0, 130) && randomF(0, 10) > 9.4;
 
     if (!isRed) {
       redImageData.data[i] = 0;
@@ -109,19 +112,21 @@ function initialiseChannels() {
       redImageData2.data[i + 2] = 0;
       redImageData2.data[i + 3] = 0;
 
-      blueImageData2.data[i] = 0;
-      blueImageData2.data[i + 1] = 0;
-      blueImageData2.data[i + 2] = 0;
-      blueImageData2.data[i + 3] = 0;
     } else {
 
-      blueImageData2.data[i] = random(0, 50);
-      blueImageData2.data[i + 1] = random(0, 50);
-      blueImageData2.data[i + 2] = random(150, 150);
-      blueImageData2.data[i + 3] = 50;
+      if (randomF(0, 10) > 2) {
+        blueImageData2.data[i] = random(0, 50);
+        blueImageData2.data[i + 1] = random(0, 50);
+        blueImageData2.data[i + 2] = random(150, 150);
+        blueImageData2.data[i + 3] = 40;
+      } else {
+        blueImageData2.data[i] = 0;
+        blueImageData2.data[i + 1] = 0;
+        blueImageData2.data[i + 2] = 0;
+        blueImageData2.data[i + 3] = 0;
+      }
+
     }
-
-
 
     var isGreen = between(g, 120, 255) && between(b, 110, 230) && randomF(0, 10) > 3;
     if (!isGreen) {
@@ -187,7 +192,7 @@ function initialiseChannels() {
   ctx.drawImage(image, 0, 0, w, w);
 }
 
-image.onload = function() {
+image.onload = function () {
   ctx.drawImage(image, 0, 0, w, w);
   drawText();
   initialiseChannels();
@@ -202,16 +207,17 @@ var startTime = Date.now();
 
 if (isMobileOrTablet) {
   spin.style.display = 'block';
-  canvas.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 9) + 'px';
+  canvas.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 18) + 'px';
 }
 
-function randomiseImage(images) {
+function selectNextImage(images) {
   var index = currentImageIndex === 0 ? 1 : 0;
   currentImageIndex = index;
   return images[index];
 }
 
-canvas.addEventListener('click', function() {
+canvas.addEventListener('click', function () {
+  clicks++;
   time = 0;
 
   startTime = Date.now();
@@ -224,40 +230,32 @@ canvas.addEventListener('click', function() {
     start = true;
   }
 
-  if (isMobileOrTablet && !melting) {
+  if (isMobileOrTablet && !melting && (clicks % 3) === 0) {
     spin.style.opacity = 1.0;
-    setTimeout(function() {
-      if (shouldChange) {
-        image = randomiseImage(images);
-      } else {
-        shouldChange = true;
-      }
+    setTimeout(function () {
+      image = selectNextImage(images);
       ctx.drawImage(image, 0, 0, w, w);
       drawText();
       setTimeout(initialiseChannels, 20);
       ctx.drawImage(image, 0, 0, w, w);
       spin.style.opacity = 0.0;
     }, 50);
-  } else if (!melting) {
-    if (shouldChange) {
-      image = randomiseImage(images);
-    } else {
-      shouldChange = true;
-    }
+
+  } else if (!melting && (clicks % 3) === 0) {
+    image = selectNextImage(images);
     ctx.drawImage(image, 0, 0, w, w);
     drawText();
     initialiseChannels();
     ctx.drawImage(image, 0, 0, w, w);
-  } else {
-    start = true;
   }
 });
 
-canvas.addEventListener('mousemove', function(e) {
+canvas.addEventListener('mousemove', function (e) {
   mouseX = e.clientX - e.target.offsetLeft + 1;
+  mouseY = e.clientY - e.target.offsetLeft + 1;
 });
 
-canvas.addEventListener('touchmove', function(e) {
+canvas.addEventListener('touchmove', function (e) {
   mouseX = e.touches[0].clientX - e.target.offsetLeft - 1;
 });
 
@@ -266,8 +264,8 @@ function drawText() {
   var textSize = unit * 6;
   var x = unit * 7;
   var y = unit * 7 - 17;
-  if (start) {
-    x += randomF(-1, 1);
+  if (start && melting) {
+    x += randomF(-1, 1) - (mouseX / 300) + 2;
     y += randomF(-1, 1);
     ctx.globalAlpha = randomF(0.3, 0.8);
   } else {
@@ -287,7 +285,7 @@ function screenshot(canvas) {
 
 function melt(p, n) {
   ctx.globalAlpha = randomF(0.0, 0.1);
-  ctx.drawImage(greenPixels, 0 + randomF(-1.5, 1.5) + (mouseX / (w / randomF(0, 5))), (p / 7) + n, w, w);
+  ctx.drawImage(greenPixels, 0 + randomF(-1.5, 1.5) + (mouseX / (w / randomF(0, 3))), (p / 7) + n, w, w);
 
   ctx.globalAlpha = randomF(0.0, 0.1);
   ctx.drawImage(veryGreenPixels, 0 + randomF(-5, 5) + (mouseX / (w / randomF(0, 4))), (p / 9) + n, w, w);
@@ -301,17 +299,17 @@ function melt(p, n) {
   ctx.globalAlpha = randomF(0.2, 0.6);
   ctx.drawImage(redPixels, randomF(-1, 1) + (mouseX / (w / randomF(2, 5))), p + randomF(0, 1), w, w);
 
-  ctx.globalAlpha = randomF(0.5, 0.9);
+  ctx.globalAlpha = randomF(0.5, 0.6);
   ctx.drawImage(redPixels2, 0, p / 5, w, w);
 
   ctx.globalAlpha = randomF(0.2, 0.3);
-  ctx.drawImage(darkPixels, n + randomF(-1, 1) + (mouseX / (w / randomF(2, 5))), p, w, w);
+  ctx.drawImage(darkPixels, n + randomF(-1, 1) + (mouseX / (w / randomF(2, 8))), p, w, w);
 
   ctx.globalAlpha = (p / 120) / 5;
   ctx.drawImage(bluePixels, 0, (p / 3) + n + randomF(0, 10), w, w);
 }
 
-document.getElementById('save').addEventListener('click', function() {
+document.getElementById('save').addEventListener('click', function () {
   screenshot(canvas);
 });
 
@@ -324,12 +322,14 @@ function render() {
 
   var progress = time / 20;
   var n = simplex.noise2D(progress, random.y);
-
-  if (p < 120 && !paused && start) {
+  if (p < maxProgress && !paused && start && (clicks % 3) !== 0) {
     melting = true;
     melt(p, n);
   } else {
     melting = false;
+    if (clicks !== 0 && !paused && (clicks % 3) !== 0) {
+      clicks = 2;
+    }
   }
 
   drawText();

@@ -16,17 +16,15 @@
       #canvas {
         cursor: pointer;
       }
-      i {
-        color: white;
-      }
-
-      i:hover {
-        cursor: pointer;
-      }
 
       #spin {
         margin-top: 20px;
         display: none;
+        color: white;
+        font-size: 7vmin;
+        position: fixed;
+        top: 50px;
+        left: 50%;
       }
 
       #text {
@@ -47,8 +45,37 @@
         color: white;
       }
 
-      .icon:hover{
-        color: grey;
+      .black:before {
+        color: white;
+      }
+
+      .icon {
+        color: #616161;
+        font-size: 3.5vmin;
+
+        width: 100%;
+      }
+
+      .icon:hover {
+        color: #9E9E9E;
+        cursor: pointer;
+      }
+
+      .ic {
+        text-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+      }
+
+      /* Portrait and Landscape */
+      @media only screen
+        and (min-device-width: 320px)
+        and (max-device-width: 568px)
+        and (-webkit-min-device-pixel-ratio: 2) {
+          #icons {
+            margin-top: 2vh;
+          }
+          .icon {
+            font-size: 7vmin;
+          }
       }
 
     </style>
@@ -61,14 +88,25 @@
         <img id="image2" src="./assets/flowers-02.png">
     </div>
     <a id="screen"></a>
-    <i class="fa fa-cog fa-2x fa-spin" id="spin" aria-hidden="true"></i>
-    <br>
+    <i class="fa fa-cog fa-spin" id="spin" aria-hidden="true"></i>
+    <!-- <br><br> -->
     <canvas id="canvas"></canvas>
     <br><br>
     <div id="icons">
-      <i class="fa fa-floppy-o fa-3x icon" aria-hidden="true" id="save" title="Download Cover Art"></i>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <a class="fa fa-soundcloud fa-3x icon" aria-hidden="true" title="Listen To The EP" href="http://soundcloud/divarrecords"></a>
+      <span class="fa-stack icon">
+        <i class="fa fa-circle fa-stack-2x ic"></i>
+        <i class="fa fa-soundcloud fa-stack-1x fa-inverse black"></i>
+      </span>
+      &nbsp;&nbsp;&nbsp;
+      <span class="fa-stack icon" id="save">
+        <i class="fa fa-circle fa-stack-2x ic"></i>
+        <i class="fa fa-floppy-o fa-stack-1x fa-inverse black"></i>
+      </span>
+      &nbsp;&nbsp;&nbsp;
+      <span class="fa-stack icon">
+        <i class="fa fa-circle fa-stack-2x ic"></i>
+        <i class="fa fa-info fa-stack-1x fa-inverse black"></i>
+      </span>
     </div>
     <br><br>
 </body>
