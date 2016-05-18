@@ -27,6 +27,7 @@ var veryGreenPixels = new Image();
 var yellowPixels = new Image();
 var darkPixels = new Image();
 var text = new Image();
+var mouseX = 0;
 text.src = './assets/text.png';
 
 var spin = document.getElementById('spin');
@@ -39,6 +40,7 @@ var paused = true;
 var melting = false;
 var shouldChange = false;
 var currentImageIndex = 0;
+var meltSpeed = 16;
 
 canvas.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 15) + 'px';
 
@@ -84,7 +86,7 @@ function initialiseChannels() {
     var g = imageData.data[i + 1];
     var b = imageData.data[i + 2];
 
-    var isRed = between(r, 190, 255) && between(g, 0, 130) && randomF(0, 10) > 9.5;
+    var isRed = between(r, 190, 255) && between(g, 0, 130) && randomF(0, 10) > 9.3;
 
     if (!isRed) {
       redImageData.data[i] = 0;
@@ -93,7 +95,7 @@ function initialiseChannels() {
       redImageData.data[i + 3] = 0;
     }
 
-    var isRed2 = between(r, 200, 255) && between(g, 0, 130) && randomF(0, 10) > 6;
+    var isRed2 = between(r, 200, 255) && between(g, 0, 130) && randomF(0, 10) > 5;
 
     if (!isRed2) {
       redImageData2.data[i] = 0;
@@ -118,7 +120,7 @@ function initialiseChannels() {
       veryGreenImageData.data[i + 3] = 0;
     }
 
-    var isYellow = between(g, 220, 230) && between(b, 220, 230) && randomF(0, 20) > 16;
+    var isYellow = between(g, 220, 230) && between(b, 220, 230) && randomF(0, 20) > 10;
     if (!isYellow) {
       yellowImageData.data[i] = 0;
       yellowImageData.data[i + 1] = 0;
@@ -126,7 +128,7 @@ function initialiseChannels() {
       yellowImageData.data[i + 3] = 0;
     }
 
-    var isDark = between(r, 0, 13) && between(g, 0, 13) && between(b, 0, 13) && randomF(0, 10) > 2;
+    var isDark = between(r, 0, 13) && between(g, 0, 13) && between(b, 0, 13) && randomF(0, 10) > 1;
     if (!isDark) {
       darkImageData.data[i] = 0;
       darkImageData.data[i + 1] = 0;
@@ -228,6 +230,14 @@ canvas.addEventListener('click', function() {
   }
 });
 
+canvas.addEventListener('mousemove', function(e) {
+  mouseX = e.clientX - e.target.offsetLeft + 1;
+});
+
+canvas.addEventListener('touchmove', function(e) {
+  mouseX = e.touches[0].clientX - e.target.offsetLeft - 1;
+});
+
 function drawText() {
   var unit = w / 20;
   var textSize = unit * 6;
@@ -254,19 +264,25 @@ function screenshot(canvas) {
 
 function melt(p, n) {
   ctx.globalAlpha = randomF(0.0, 0.1);
-  ctx.drawImage(greenPixels, 0 + randomF(-1.5, 1.5), (p / 7) + n, w, w);
+  ctx.drawImage(greenPixels, 0 + randomF(-1.5, 1.5) + (mouseX / (w / randomF(0, 5))), (p / 7) + n, w, w);
+
   ctx.globalAlpha = randomF(0.0, 0.1);
-  ctx.drawImage(veryGreenPixels, 0 + randomF(-5, 5), (p / 9) + n, w, w);
+  ctx.drawImage(veryGreenPixels, 0 + randomF(-5, 5) + (mouseX / (w / randomF(0, 4))), (p / 9) + n, w, w);
+
   ctx.globalAlpha = randomF(0.0, 0.3);
-  ctx.drawImage(yellowPixels, n + randomF(-1, 1), (p / 2), w, w);
+  ctx.drawImage(yellowPixels, n + randomF(-1, 1) + (mouseX / (w / randomF(1, 3))), (p / 2), w, w);
+
   ctx.globalAlpha = randomF(0.0, 0.2);
   ctx.drawImage(yellowPixels, 0, 0, w, w);
-  ctx.globalAlpha = randomF(0.1, 0.6);
-  ctx.drawImage(redPixels, randomF(-1, 1), p + randomF(0, 1), w, w);
-  ctx.globalAlpha = randomF(0.1, 0.8);
+
+  ctx.globalAlpha = randomF(0.2, 0.6);
+  ctx.drawImage(redPixels, randomF(-1, 1) + (mouseX / (w / randomF(2, 5))), p + randomF(0, 1), w, w);
+
+  ctx.globalAlpha = randomF(0.5, 0.9);
   ctx.drawImage(redPixels2, 0, p / 5, w, w);
+
   ctx.globalAlpha = randomF(0.2, 0.3);
-  ctx.drawImage(darkPixels, n + randomF(-1, 1), p, w, w);
+  ctx.drawImage(darkPixels, n + randomF(-1, 1) + (mouseX / (w / randomF(2, 5))), p, w, w);
 }
 
 document.getElementById('save').addEventListener('click', function() {
@@ -274,7 +290,7 @@ document.getElementById('save').addEventListener('click', function() {
 });
 
 function render() {
-  var p = ((Date.now() - startTime) / 1000) * 10;
+  var p = ((Date.now() - startTime) / 1000) * meltSpeed;
 
   if (!paused && start) {
     time++;
@@ -283,9 +299,8 @@ function render() {
   var progress = time / 20;
   var n = simplex.noise2D(progress, random.y);
 
-  if (p < 95 && !paused && start) {
+  if (p < 120 && !paused && start) {
     melting = true;
-    console.log('rendering', time);
     melt(p, n);
   } else {
     melting = false;
