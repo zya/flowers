@@ -41,7 +41,7 @@ spin.style.opacity = 1.0;
 
 var fake = document.getElementById('fake');
 
-var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.2 : window.innerWidth / 1.03;
+var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.2 : window.innerWidth;
 var start = false;
 var time = 0;
 var paused = true;
@@ -197,7 +197,7 @@ function initialiseChannels() {
   ctx.drawImage(image, 0, 0, w, w);
 }
 
-image.onload = function() {
+image.onload = function () {
   spin.style.opacity = 0.0;
   ctx.drawImage(image, 0, 0, w, w);
   drawText();
@@ -206,8 +206,12 @@ image.onload = function() {
   render();
 };
 
-window.onload = function() {
-  // waves.attach('icon', ['waves-circle']);
+window.onload = function () {
+  Array.from(document.getElementsByClassName('icon')).forEach(function (element) {
+    element.addEventListener('click', function () {
+      waves.ripple(element);
+    });
+  });
 };
 
 var src = images[currentImageIndex].src;
@@ -226,7 +230,7 @@ function selectNextImage(images) {
   return images[index];
 }
 
-canvas.addEventListener('click', function(e) {
+canvas.addEventListener('click', function (e) {
   clicks++;
   time = 0;
 
@@ -251,13 +255,13 @@ canvas.addEventListener('click', function(e) {
 
   if (isMobileOrTablet && !melting && (clicks % 3) === 0) {
     spin.style.opacity = 1.0;
-    setTimeout(function() {
+    setTimeout(function () {
       image = selectNextImage(images);
       ctx.drawImage(image, 0, 0, w, w);
       drawText();
       setTimeout(initialiseChannels, 40);
       ctx.drawImage(image, 0, 0, w, w);
-      setTimeout(function() {
+      setTimeout(function () {
         spin.style.opacity = 0.0;
       }, 200);
     }, 50);
@@ -271,16 +275,16 @@ canvas.addEventListener('click', function(e) {
   }
 });
 
-canvas.addEventListener('mousemove', function(e) {
+canvas.addEventListener('mousemove', function (e) {
   mouseX = e.clientX - e.target.offsetLeft + 1;
   mouseY = e.clientY - e.target.offsetLeft + 1;
 });
 
-document.addEventListener('mousemove', function(e) {
+document.addEventListener('mousemove', function (e) {
   rawMouseX = e.clientX;
   rawMouseY = e.clientY;
 });
-canvas.addEventListener('touchmove', function(e) {
+canvas.addEventListener('touchmove', function (e) {
   mouseX = e.touches[0].clientX - e.target.offsetLeft - 1;
   e.preventDefault();
 });
@@ -337,10 +341,9 @@ function melt(p, n) {
   canvas.style.cursor = 'ew-resize';
 }
 
-document.getElementById('save').addEventListener('click', function() {
+document.getElementById('save').addEventListener('click', function () {
   screenshot(canvas);
 });
-
 
 function render() {
   var p = ((Date.now() - startTime) / 1000) * meltSpeed;
