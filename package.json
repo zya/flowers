@@ -8,6 +8,7 @@
     "colorformat": "^1.2.3",
     "lerp": "^1.0.3",
     "lodash": "^4.11.1",
+    "node-waves": "^0.7.5",
     "random-float": "^1.0.0",
     "random-int": "^1.0.0",
     "simplex-noise": "^2.2.0"

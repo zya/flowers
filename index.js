@@ -3,6 +3,8 @@
 var random = require('random-int');
 var bowser = require('bowser');
 var randomF = require('random-float');
+var waves = require('node-waves');
+console.log(waves);
 var SimplexNoise = require('simplex-noise');
 
 var simplex = new SimplexNoise();
@@ -30,10 +32,15 @@ var bluePixels = new Image();
 var text = new Image();
 var mouseX = 0;
 var mouseY = 0;
+var rawMouseX = 0;
+var rawMouseY = 0;
+
 text.src = './assets/text.png';
 
 var spin = document.getElementById('spin');
 spin.style.opacity = 1.0;
+
+var fake = document.getElementById('fake');
 
 var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.2 : window.innerWidth / 1.02;
 var start = false;
@@ -46,7 +53,7 @@ var maxProgress = 130;
 
 var clicks = 0;
 
-canvas.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 21) + 'px';
+fake.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 21) + 'px';
 
 canvas.width = w;
 canvas.height = w;
@@ -191,13 +198,17 @@ function initialiseChannels() {
   ctx.drawImage(image, 0, 0, w, w);
 }
 
-image.onload = function () {
+image.onload = function() {
   spin.style.opacity = 0.0;
   ctx.drawImage(image, 0, 0, w, w);
   drawText();
   initialiseChannels();
   ctx.drawImage(image, 0, 0, w, w);
   render();
+};
+
+window.onload = function() {
+  waves.attach('icon', ['waves-circle']);
 };
 
 var src = images[currentImageIndex].src;
@@ -207,7 +218,7 @@ var startTime = Date.now();
 
 if (isMobileOrTablet) {
   spin.style.display = 'block';
-  canvas.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 18) + 'px';
+  fake.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 18) + 'px';
 }
 
 function selectNextImage(images) {
@@ -216,10 +227,22 @@ function selectNextImage(images) {
   return images[index];
 }
 
-canvas.addEventListener('click', function () {
+canvas.addEventListener('click', function(e) {
   clicks++;
   time = 0;
 
+  e.preventDefault();
+
+  console.log(e);
+  // console.log(rawMouseX, rawMouseY);
+  waves.ripple(document.getElementsByClassName('container')[0], {
+    position: {
+      x: e.offsetX,
+      y: e.offsetY
+    },
+    duration: 50
+
+  });
   startTime = Date.now();
 
   if (melting) {
@@ -232,13 +255,13 @@ canvas.addEventListener('click', function () {
 
   if (isMobileOrTablet && !melting && (clicks % 3) === 0) {
     spin.style.opacity = 1.0;
-    setTimeout(function () {
+    setTimeout(function() {
       image = selectNextImage(images);
       ctx.drawImage(image, 0, 0, w, w);
       drawText();
       setTimeout(initialiseChannels, 20);
       ctx.drawImage(image, 0, 0, w, w);
-      setTimeout(function () {
+      setTimeout(function() {
         spin.style.opacity = 0.0;
       }, 200);
     }, 50);
@@ -252,12 +275,16 @@ canvas.addEventListener('click', function () {
   }
 });
 
-canvas.addEventListener('mousemove', function (e) {
+canvas.addEventListener('mousemove', function(e) {
   mouseX = e.clientX - e.target.offsetLeft + 1;
   mouseY = e.clientY - e.target.offsetLeft + 1;
 });
 
-canvas.addEventListener('touchmove', function (e) {
+document.addEventListener('mousemove', function(e) {
+  rawMouseX = e.clientX;
+  rawMouseY = e.clientY;
+});
+canvas.addEventListener('touchmove', function(e) {
   mouseX = e.touches[0].clientX - e.target.offsetLeft - 1;
   e.preventDefault();
 });
@@ -312,9 +339,10 @@ function melt(p, n) {
   ctx.drawImage(bluePixels, 0, (p / 3) + n + randomF(0, 10), w, w);
 }
 
-document.getElementById('save').addEventListener('click', function () {
+document.getElementById('save').addEventListener('click', function() {
   screenshot(canvas);
 });
+
 
 function render() {
   var p = ((Date.now() - startTime) / 1000) * meltSpeed;

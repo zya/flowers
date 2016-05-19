@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title></title>
+
     <style>
       html, body {
         width: 100%;
@@ -82,6 +83,7 @@
 
     </style>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://fian.my.id/Waves/static/waves.min.css?v=0.7.4">
 </head>
 
 <body>
@@ -91,26 +93,27 @@
     </div>
     <a id="screen"></a>
     <i class="fa fa-cog fa-spin" id="spin" aria-hidden="true"></i>
-    <!-- <br><br> -->
-    <canvas id="canvas"></canvas>
+    <div id="fake"></div>
+    <div class="container waves-effect">
+      <canvas id="canvas"></canvas>
+    </div>
     <br><br>
     <div id="icons">
-      <span class="fa-stack icon">
+      <span class="fa-stack icon waves-effect">
         <i class="fa fa-circle fa-stack-2x ic"></i>
         <i class="fa fa-soundcloud fa-stack-1x fa-inverse black"></i>
       </span>
       &nbsp;&nbsp;&nbsp;
-      <span class="fa-stack icon" id="save">
+      <span class="fa-stack icon waves-effect" id="save">
         <i class="fa fa-circle fa-stack-2x ic"></i>
         <i class="fa fa-floppy-o fa-stack-1x fa-inverse black"></i>
       </span>
       &nbsp;&nbsp;&nbsp;
-      <span class="fa-stack icon">
+      <span class="fa-stack icon waves-effect">
         <i class="fa fa-circle fa-stack-2x ic"></i>
         <i class="fa fa-info fa-stack-1x fa-inverse black"></i>
       </span>
     </div>
-    <br><br>
 </body>
 <script src="./build/bundle.js"></script>
 </html>
