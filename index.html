@@ -3,15 +3,16 @@
 <head>
     <meta charset="utf-8">
     <title></title>
-
     <style>
       html, body {
-        width: 100%;
-        height: 100%;
-        margin: 0;
+        width: 100vw;
+        height: 98vh;
         text-align: center;
         background-color: #1a1a1a;
         color: white;
+        margin: 0;
+        margin-left: 1px;
+        overflow-x: hidden;
       }
       #canvas {
         cursor: pointer;
@@ -33,6 +34,7 @@
         display: inline-block;
         margin-top: 5px;
       }
+
       #screen {
         display: none;
       }
@@ -53,8 +55,6 @@
       .icon {
         color: #616161;
         font-size: 3.5vmin;
-
-        width: 100%;
       }
 
       .icon:hover {
@@ -99,17 +99,17 @@
     </div>
     <br><br>
     <div id="icons">
-      <span class="fa-stack icon waves-effect">
+      <span class="fa-stack icon">
         <i class="fa fa-circle fa-stack-2x ic"></i>
         <i class="fa fa-soundcloud fa-stack-1x fa-inverse black"></i>
       </span>
       &nbsp;&nbsp;&nbsp;
-      <span class="fa-stack icon waves-effect" id="save">
+      <span class="fa-stack icon" id="save">
         <i class="fa fa-circle fa-stack-2x ic"></i>
         <i class="fa fa-floppy-o fa-stack-1x fa-inverse black"></i>
       </span>
       &nbsp;&nbsp;&nbsp;
-      <span class="fa-stack icon waves-effect">
+      <span class="fa-stack icon">
         <i class="fa fa-circle fa-stack-2x ic"></i>
         <i class="fa fa-info fa-stack-1x fa-inverse black"></i>
       </span>

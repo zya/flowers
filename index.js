@@ -4,7 +4,6 @@ var random = require('random-int');
 var bowser = require('bowser');
 var randomF = require('random-float');
 var waves = require('node-waves');
-console.log(waves);
 var SimplexNoise = require('simplex-noise');
 
 var simplex = new SimplexNoise();
@@ -42,14 +41,14 @@ spin.style.opacity = 1.0;
 
 var fake = document.getElementById('fake');
 
-var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.2 : window.innerWidth / 1.02;
+var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.2 : window.innerWidth / 1.03;
 var start = false;
 var time = 0;
 var paused = true;
 var melting = false;
 var currentImageIndex = 0;
 var meltSpeed = 13;
-var maxProgress = 130;
+var maxProgress = 150;
 
 var clicks = 0;
 
@@ -208,7 +207,7 @@ image.onload = function() {
 };
 
 window.onload = function() {
-  waves.attach('icon', ['waves-circle']);
+  // waves.attach('icon', ['waves-circle']);
 };
 
 var src = images[currentImageIndex].src;
@@ -218,7 +217,7 @@ var startTime = Date.now();
 
 if (isMobileOrTablet) {
   spin.style.display = 'block';
-  fake.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 18) + 'px';
+  fake.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 11) + 'px';
 }
 
 function selectNextImage(images) {
@@ -233,15 +232,12 @@ canvas.addEventListener('click', function(e) {
 
   e.preventDefault();
 
-  console.log(e);
-  // console.log(rawMouseX, rawMouseY);
   waves.ripple(document.getElementsByClassName('container')[0], {
     position: {
       x: e.offsetX,
       y: e.offsetY
     },
-    duration: 50
-
+    duration: 500,
   });
   startTime = Date.now();
 
@@ -259,7 +255,7 @@ canvas.addEventListener('click', function(e) {
       image = selectNextImage(images);
       ctx.drawImage(image, 0, 0, w, w);
       drawText();
-      setTimeout(initialiseChannels, 20);
+      setTimeout(initialiseChannels, 40);
       ctx.drawImage(image, 0, 0, w, w);
       setTimeout(function() {
         spin.style.opacity = 0.0;
@@ -337,6 +333,8 @@ function melt(p, n) {
 
   ctx.globalAlpha = (p / 120) / 5;
   ctx.drawImage(bluePixels, 0, (p / 3) + n + randomF(0, 10), w, w);
+
+  canvas.style.cursor = 'ew-resize';
 }
 
 document.getElementById('save').addEventListener('click', function() {
@@ -358,6 +356,7 @@ function render() {
     melt(p, n);
   } else {
     melting = false;
+    canvas.style.cursor = 'pointer';
     if (clicks !== 0 && !paused && (clicks % 3) !== 0) {
       clicks = 2;
     }
