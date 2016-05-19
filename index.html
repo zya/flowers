@@ -11,7 +11,7 @@
         background-color: #1a1a1a;
         color: white;
         margin: 0;
-        margin-left: 1px;
+        /*margin-left: 1px;*/
         overflow-x: hidden;
       }
 
@@ -22,7 +22,7 @@
       #spin {
         margin-top: 20px;
         color: #FAFAFA;
-        font-size: 3.5vw;
+        font-size: 2vw;
         position: fixed;
         opacity: 1;
         top: 50px;
@@ -59,7 +59,7 @@
       }
 
       .icon:hover {
-        /*color: #9E9E9E;*/
+        color: #9E9E9E;
         cursor: pointer;
       }
 
@@ -72,10 +72,11 @@
         and (max-device-width: 568px)
         and (-webkit-min-device-pixel-ratio: 2) {
           #icons {
-            margin-top: 6vh;
+            margin-top: 3vh;
           }
           .icon {
             font-size: 7vmin;
+            text-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
           }
           #spin {
             font-size: 5vw;
@@ -83,8 +84,8 @@
       }
 
     </style>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css">
-    <link rel="stylesheet" href="http://fian.my.id/Waves/static/waves.min.css?v=0.7.4">
+    <link rel="stylesheet" href="./assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./assets/css/waves.min.css">
 </head>
 
 <body>
@@ -100,14 +101,14 @@
     </div>
     <br><br>
     <div id="icons">
-      <span class="fa-stack icon waves-effect">
+      <span class="fa-stack icon">
         <i class="fa fa-circle fa-stack-2x ic"></i>
-        <i class="fa fa-soundcloud fa-stack-1x fa-inverse black"></i>
+        <i class="fa fa-soundcloud fa-stack-1x black waves-effect"></i>
       </span>
       &nbsp;&nbsp;&nbsp;
-      <span class="fa-stack icon waves-effect" id="save">
+      <span class="fa-stack icon" id="save">
         <i class="fa fa-circle fa-stack-2x ic"></i>
-        <i class="fa fa-floppy-o fa-stack-1x fa-inverse black"></i>
+        <i class="fa fa-floppy-o fa-stack-1x black waves-effect"></i>
       </span>
       <!-- &nbsp;&nbsp;&nbsp;
       <span class="fa-stack icon">

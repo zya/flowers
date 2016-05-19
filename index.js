@@ -207,8 +207,9 @@ image.onload = function () {
 };
 
 window.onload = function () {
-  Array.from(document.getElementsByClassName('icon')).forEach(function (element) {
-    element.addEventListener('click', function () {
+  Array.from(document.getElementsByClassName('black')).forEach(function (element) {
+    element.addEventListener('click', function (e) {
+      e.preventDefault();
       waves.ripple(element);
     });
   });
@@ -221,7 +222,7 @@ var startTime = Date.now();
 
 if (isMobileOrTablet) {
   spin.style.display = 'block';
-  fake.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 11) + 'px';
+  fake.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 15) + 'px';
 }
 
 function selectNextImage(images) {
