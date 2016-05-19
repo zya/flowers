@@ -101,7 +101,7 @@ function initialiseChannels() {
     var g = imageData.data[i + 1];
     var b = imageData.data[i + 2];
 
-    var isRed = between(r, 190, 255) && between(g, 0, 130) && randomF(0, 10) > 9.4;
+    var isRed = between(r, random(190, 200), 255) && between(g, 0, 130) && randomF(0, 10) > 9.4;
 
     if (!isRed) {
       redImageData.data[i] = 0;
@@ -110,7 +110,7 @@ function initialiseChannels() {
       redImageData.data[i + 3] = 0;
     }
 
-    var isRed2 = between(r, 200, 255) && between(g, 0, 130) && randomF(0, 10) > 5;
+    var isRed2 = between(r, random(190, 200), 255) && between(g, 0, random(120, 130)) && randomF(0, 10) > 5;
 
     if (!isRed2) {
       redImageData2.data[i] = 0;
@@ -134,7 +134,7 @@ function initialiseChannels() {
 
     }
 
-    var isGreen = between(g, 120, 255) && between(b, 110, 230) && randomF(0, 10) > 3;
+    var isGreen = between(g, random(110, 120), random(230, 225)) && between(b, random(110, 115), random(220, 230)) && randomF(0, 10) > 3;
     if (!isGreen) {
       greenImageData.data[i] = 0;
       greenImageData.data[i + 1] = 0;
@@ -158,7 +158,8 @@ function initialiseChannels() {
       yellowImageData.data[i + 3] = 0;
     }
 
-    var isDark = between(r, 0, 13) && between(g, 0, 13) && between(b, 0, 13) && randomF(0, 10) > 1;
+    var darkRandomRangeMax = random(9, 15);
+    var isDark = between(r, 0, darkRandomRangeMax) && between(g, 0, darkRandomRangeMax) && between(b, 0, darkRandomRangeMax) && randomF(0, 10) > 1;
     if (!isDark) {
       darkImageData.data[i] = 0;
       darkImageData.data[i + 1] = 0;
@@ -337,8 +338,8 @@ function melt(p, n) {
   ctx.globalAlpha = randomF(0.2, 0.3);
   ctx.drawImage(darkPixels, n + randomF(-1, 1) + (mouseX / (w / randomF(2, 8))), p, w, w);
 
-  ctx.globalAlpha = (p / 120) / 5;
-  ctx.drawImage(bluePixels, 0, (p / 3) + n + randomF(0, 10), w, w);
+  ctx.globalAlpha = (p / maxProgress) / 3;
+  ctx.drawImage(bluePixels, 0, (p / 2.5) + n + randomF(0, 10), w, w);
 
   canvas.style.cursor = 'ew-resize';
 }
