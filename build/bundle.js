@@ -389,7 +389,6 @@ function indicateDone() {
   }, 1900);
 }
 
-
 function render() {
   var p = ((Date.now() - startTime) / 1000) * meltSpeed;
 
