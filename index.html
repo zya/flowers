@@ -17,6 +17,7 @@
 
       #canvas {
         cursor: pointer;
+        width: 75vmin;
       }
 
       #spin {
@@ -28,6 +29,8 @@
         top: 50px;
         left: 49.5vw;
         transition: opacity 300ms;
+        -webkit-transition: opacity 300ms;
+        -moz-transition: opacity 300ms;
       }
 
       #text {
@@ -68,28 +71,37 @@
       #help {
         font-family: 'Roboto', sans-serif;
         color: #9E9E9E;
-        font-size: 0.9vmax;
+        font-size: 1.75vmin;
         padding-top: 20px;
-        margin-bottom: -35px;
         transition: opacity 800ms;
+        -webkit-transition: opacity 800ms;
+        -moz-transition: opacity 800ms;
         opacity: 0;
       }
 
       #help-text {
         margin-bottom: -10px;
         transition: color 700ms;
+        -webkit-transition: color 700ms;
+        -moz-transition: color 700ms;
       }
 
       #save-circle {
         transition: color 1200ms;
+        -webkit-transition: color 1200ms;
+        -moz-transition: color 1200ms;
       }
 
       #sc-circle {
         transition: color 1200ms;
+        -webkit-transition: color 1200ms;
+        -moz-transition: color 1200ms;
       }
 
       #save {
         transition: transform 500ms;
+        -webkit-transition: transform 500ms;
+        -moz-transition: transform 500ms;
       }
 
       @media only screen
@@ -111,8 +123,11 @@
           #help {
             font-size: 1.7vmax;
             padding-top: 3vh;
-            margin-bottom: -8vh;
             margin-top: 2vh;
+          }
+
+          #canvas {
+            width: 100vw;
           }
       }
 
@@ -133,7 +148,8 @@
     </div>
     <a id="screen"></a>
     <i class="fa fa-cog fa-spin" id="spin" aria-hidden="true"></i>
-    <div id="fake"></div>
+    <!-- <div id="fake"></div> -->
+    <br>
     <div class="container waves-effect">
       <canvas id="canvas"></canvas>
     </div>

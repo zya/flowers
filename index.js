@@ -44,9 +44,7 @@ text.src = './assets/text.png';
 var spin = document.getElementById('spin');
 spin.style.opacity = 1.0;
 
-var fake = document.getElementById('fake');
-
-var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.3 : window.innerWidth;
+var w = canvas.getBoundingClientRect().width * 1.3;
 var start = false;
 var time = 0;
 var paused = true;
@@ -57,13 +55,19 @@ var maxProgress = 150;
 var once = true;
 var clicks = 0;
 
-fake.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 21) + 'px';
-
 canvas.width = w;
 canvas.height = w;
 
 function between(x, min, max) {
   return x >= min && x <= max;
+}
+
+function flashText() {
+  var currentColor = '#9E9E9E';
+  helpText.style.color = 'white';
+  setTimeout(function () {
+    helpText.style.color = currentColor;
+  }, 500);
 }
 
 function initialiseChannels() {
@@ -205,7 +209,6 @@ function initialiseChannels() {
 
 image.onload = function () {
   spin.style.opacity = 0.0;
-
   ctx.drawImage(image, 0, 0, w, w);
   drawText();
   initialiseChannels();
@@ -236,18 +239,73 @@ window.onload = function () {
   }
 
   flashText();
-
   help.style.opacity = 1;
 
-};
+  canvas.addEventListener('click', function (e) {
+    clicks++;
+    time = 0;
+    once = true;
 
-function flashText() {
-  var currentColor = '#9E9E9E';
-  helpText.style.color = 'white';
-  setTimeout(function () {
-    helpText.style.color = currentColor;
-  }, 500);
-}
+    e.preventDefault();
+
+    waves.ripple(container, {
+      position: {
+        x: e.offsetX,
+        y: e.offsetY
+      },
+      duration: 500,
+    });
+    startTime = Date.now();
+
+    if (melting) {
+      paused = true;
+      start = false;
+      indicateDone();
+      if (isMobileOrTablet) {
+        helpText.innerHTML = 'TAP AGAIN TO RESET';
+      } else {
+        helpText.innerHTML = 'CLICK AGAIN TO RESET';
+      }
+      flashText();
+    } else {
+      paused = false;
+      if (isMobileOrTablet) {
+        helpText.innerHTML = 'TOUCH AND DRAG TO EFFECT THE DIRECTION';
+      } else {
+        helpText.innerHTML = 'MOVE THE MOUSE TO EFFECT THE DIRECTION';
+      }
+      flashText();
+      start = true;
+    }
+
+    if (isMobileOrTablet && !melting && (clicks % 3) === 0) {
+      helpText.innerHTML = 'TAP ON THE IMAGE TO START';
+      help.style.opacity = 0;
+      spin.style.opacity = 1.0;
+      setTimeout(function () {
+        image = selectNextImage(images);
+        ctx.drawImage(image, 0, 0, w, w);
+        drawText();
+        setTimeout(initialiseChannels, 100);
+        ctx.drawImage(image, 0, 0, w, w);
+        setTimeout(function () {
+          spin.style.opacity = 0.0;
+          help.style.opacity = 1;
+          flashText();
+        }, 300);
+      }, 50);
+
+    } else if (!melting && (clicks % 3) === 0) {
+      helpText.innerHTML = 'CLICK ON THE IMAGE TO START';
+      flashText();
+      image = selectNextImage(images);
+      ctx.drawImage(image, 0, 0, w, w);
+      drawText();
+      initialiseChannels();
+      ctx.drawImage(image, 0, 0, w, w);
+    }
+  });
+};
 
 var src = images[currentImageIndex].src;
 image.src = src;
@@ -256,7 +314,6 @@ var startTime = Date.now();
 
 if (isMobileOrTablet) {
   spin.style.display = 'block';
-  fake.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 13) + 'px';
   maxProgress += 100;
 }
 
@@ -266,73 +323,8 @@ function selectNextImage(images) {
   return images[index];
 }
 
-canvas.addEventListener('click', function (e) {
-  clicks++;
-  time = 0;
-  once = true;
-
-  e.preventDefault();
-
-  waves.ripple(container, {
-    position: {
-      x: e.offsetX,
-      y: e.offsetY
-    },
-    duration: 500,
-  });
-  startTime = Date.now();
-
-  if (melting) {
-    paused = true;
-    start = false;
-    indicateDone();
-    if (isMobileOrTablet) {
-      helpText.innerHTML = 'TAP AGAIN TO RESET';
-    } else {
-      helpText.innerHTML = 'CLICK AGAIN TO RESET';
-    }
-    flashText();
-  } else {
-    paused = false;
-    if (isMobileOrTablet) {
-      helpText.innerHTML = 'TOUCH AND DRAG TO EFFECT';
-    } else {
-      helpText.innerHTML = 'MOVE THE MOUSE TO EFFECT';
-    }
-    flashText();
-    start = true;
-  }
-
-  if (isMobileOrTablet && !melting && (clicks % 3) === 0) {
-    helpText.innerHTML = 'TAP ON THE IMAGE TO START';
-    flashText();
-    help.style.opacity = 0;
-    spin.style.opacity = 1.0;
-    setTimeout(function () {
-      image = selectNextImage(images);
-      ctx.drawImage(image, 0, 0, w, w);
-      drawText();
-      setTimeout(initialiseChannels, 100);
-      ctx.drawImage(image, 0, 0, w, w);
-      setTimeout(function () {
-        spin.style.opacity = 0.0;
-        help.style.opacity = 1;
-      }, 300);
-    }, 50);
-
-  } else if (!melting && (clicks % 3) === 0) {
-    helpText.innerHTML = 'CLICK ON THE IMAGE TO START';
-    flashText();
-    image = selectNextImage(images);
-    ctx.drawImage(image, 0, 0, w, w);
-    drawText();
-    initialiseChannels();
-    ctx.drawImage(image, 0, 0, w, w);
-  }
-});
-
 canvas.addEventListener('mousemove', function (e) {
-  mouseX = e.clientX - e.target.offsetLeft + 1;
+  mouseX = (e.clientX - e.target.offsetLeft + 1) * 1.3;
   mouseY = e.clientY - e.target.offsetLeft + 1;
 });
 
@@ -377,19 +369,19 @@ function melt(p, n) {
   ctx.drawImage(veryGreenPixels, 0 + randomF(-5, 5) + (mouseX / (w / randomF(0, 4))), (p / 9) + n, w, w);
 
   ctx.globalAlpha = randomF(0.0, 0.3);
-  ctx.drawImage(yellowPixels, n + randomF(-1, 1) + (mouseX / (w / randomF(1, 3))), (p / 2), w, w);
+  ctx.drawImage(yellowPixels, n + randomF(-1, 1) + (mouseX / (w / randomF(0, 3))), (p / 2), w, w);
 
   ctx.globalAlpha = randomF(0.0, 0.2);
   ctx.drawImage(yellowPixels, 0, 0, w, w);
 
   ctx.globalAlpha = randomF(0.2, 0.6);
-  ctx.drawImage(redPixels, randomF(-1, 1) + (mouseX / (w / randomF(2, 5))), p + randomF(0, 1), w, w);
+  ctx.drawImage(redPixels, randomF(-1, 1) + (mouseX / (w / randomF(1, 4))), p + randomF(0, 1), w, w);
 
   ctx.globalAlpha = randomF(0.5, 0.6);
   ctx.drawImage(redPixels2, 0, p / 5, w, w);
 
   ctx.globalAlpha = randomF(0.2, 0.3);
-  ctx.drawImage(darkPixels, n + randomF(-1, 1) + (mouseX / (w / randomF(2, 8))), p, w, w);
+  ctx.drawImage(darkPixels, n + randomF(-1, 1) + (mouseX / (w / randomF(0, 2))), p, w, w);
 
   ctx.globalAlpha = (p / maxProgress) / 4;
   ctx.drawImage(bluePixels, 0, (p / 2.5) + n + randomF(0, 10), w, w);
@@ -433,13 +425,11 @@ function render() {
         helpText.innerHTML = 'DOWNLOAD THE ARTWORK';
         indicateDone();
         flashText();
-
       } else if (once) {
         helpText.innerHTML = 'DOWNLOAD THE ARTWORK';
         indicateDone();
         flashText();
       }
-
     }
   }
 
