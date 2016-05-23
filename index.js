@@ -18,6 +18,7 @@ var help;
 var helpText;
 var saveCircle;
 var save;
+var progress;
 
 var isMobileOrTablet = bowser.mobile || bowser.tablet;
 
@@ -50,8 +51,8 @@ var time = 0;
 var paused = true;
 var melting = false;
 var currentImageIndex = 0;
-var meltSpeed = 13;
-var maxProgress = 150;
+var meltSpeed = 11;
+var maxProgress = 170;
 var once = true;
 var clicks = 0;
 
@@ -229,6 +230,7 @@ window.onload = function () {
   helpText = document.getElementById('help-text');
   saveCircle = document.getElementById('save-circle');
   save = document.getElementById('save');
+  progress = document.getElementById('progress');
 
   save.addEventListener('click', function () {
     screenshot(canvas);
@@ -255,6 +257,7 @@ window.onload = function () {
       },
       duration: 500,
     });
+
     startTime = Date.now();
 
     if (melting) {
@@ -288,6 +291,7 @@ window.onload = function () {
         drawText();
         setTimeout(initialiseChannels, 100);
         ctx.drawImage(image, 0, 0, w, w);
+        progress.style.width = '0%';
         setTimeout(function () {
           spin.style.opacity = 0.0;
           help.style.opacity = 1;
@@ -303,6 +307,7 @@ window.onload = function () {
       drawText();
       initialiseChannels();
       ctx.drawImage(image, 0, 0, w, w);
+      progress.style.width = '0%';
     }
   });
 };
@@ -324,7 +329,8 @@ function selectNextImage(images) {
 }
 
 canvas.addEventListener('mousemove', function (e) {
-  mouseX = (e.clientX - e.target.offsetLeft + 1) * 1.3;
+  mouseX = e.offsetX * 1.3;
+  mouseX -= (w / 2);
   mouseY = e.clientY - e.target.offsetLeft + 1;
 });
 
@@ -333,7 +339,8 @@ document.addEventListener('mousemove', function (e) {
   rawMouseY = e.clientY;
 });
 canvas.addEventListener('touchmove', function (e) {
-  mouseX = e.touches[0].clientX - e.target.offsetLeft - 1;
+  mouseX = e.touches[0].clientX * 1.3;
+  mouseX -= (w / 2);
   e.preventDefault();
 });
 
@@ -363,10 +370,12 @@ function screenshot(canvas) {
 
 function melt(p, n) {
   ctx.globalAlpha = randomF(0.0, 0.1);
-  ctx.drawImage(greenPixels, 0 + randomF(-1.5, 1.5) + (mouseX / (w / randomF(0, 3))), (p / 7) + n, w, w);
+  var mouseOffsetGreen = (mouseX / (w / randomF(1, 3)));
+  ctx.drawImage(greenPixels, 0 + randomF(-1.5, 1.5) + mouseOffsetGreen, (p / 7) + n, w, w);
 
   ctx.globalAlpha = randomF(0.0, 0.1);
-  ctx.drawImage(veryGreenPixels, 0 + randomF(-5, 5) + (mouseX / (w / randomF(0, 4))), (p / 9) + n, w, w);
+  var mouseOffsetVeryGreen = (mouseX / (w / randomF(2, 4)));
+  ctx.drawImage(veryGreenPixels, 0 + randomF(-5, 5) + mouseOffsetVeryGreen, (p / 9) + n, w, w);
 
   ctx.globalAlpha = randomF(0.0, 0.3);
   ctx.drawImage(yellowPixels, n + randomF(-1, 1) + (mouseX / (w / randomF(0, 3))), (p / 2), w, w);
@@ -375,16 +384,23 @@ function melt(p, n) {
   ctx.drawImage(yellowPixels, 0, 0, w, w);
 
   ctx.globalAlpha = randomF(0.2, 0.6);
-  ctx.drawImage(redPixels, randomF(-1, 1) + (mouseX / (w / randomF(1, 4))), p + randomF(0, 1), w, w);
+  var mouseOffsetRed = (mouseX / (w / randomF(0, 4))) * 1.3;
+  ctx.drawImage(redPixels, randomF(-1, 1) + mouseOffsetRed, p + randomF(0, 1), w, w);
 
   ctx.globalAlpha = randomF(0.5, 0.6);
   ctx.drawImage(redPixels2, 0, p / 5, w, w);
 
-  ctx.globalAlpha = randomF(0.2, 0.3);
-  ctx.drawImage(darkPixels, n + randomF(-1, 1) + (mouseX / (w / randomF(0, 2))), p, w, w);
+  ctx.globalAlpha = randomF(0.2, 0.4);
+  var mouseOffsetBlack = (mouseX / (w / randomF(0, 2))) * 4;
+  ctx.drawImage(darkPixels, n + randomF(-1, 1) + mouseOffsetBlack, p, w, w);
 
   ctx.globalAlpha = (p / maxProgress) / 4;
-  ctx.drawImage(bluePixels, 0, (p / 2.5) + n + randomF(0, 10), w, w);
+  var mouseOffsetBlue = (mouseX / (w / randomF(0, 2))) * 2;
+  ctx.drawImage(bluePixels, 0 + mouseOffsetBlue, (p / 2.5) + n + randomF(0, 10), w, w);
+
+  var progressPercentage = (p / maxProgress * 100);
+  if (progressPercentage > 99.1) progressPercentage = 100;
+  progress.style.width = progressPercentage + '%';
 
   canvas.style.cursor = 'ew-resize';
 }

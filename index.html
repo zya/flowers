@@ -62,6 +62,10 @@
         -webkit-tap-highlight-color: rgba(0,0,0,0);
       }
 
+      #icons {
+        margin-top: 1vh;
+      }
+
       .icon:hover {
         color: #9E9E9E;
         cursor: pointer;
@@ -71,8 +75,9 @@
       #help {
         font-family: 'Roboto', sans-serif;
         color: #9E9E9E;
-        font-size: 1.75vmin;
+        font-size: 1.65vmin;
         padding-top: 20px;
+        margin-top: 2vh;
         transition: opacity 800ms;
         -webkit-transition: opacity 800ms;
         -moz-transition: opacity 800ms;
@@ -80,7 +85,7 @@
       }
 
       #help-text {
-        margin-bottom: -10px;
+        margin-bottom: -3vh;
         transition: color 700ms;
         -webkit-transition: color 700ms;
         -moz-transition: color 700ms;
@@ -104,6 +109,24 @@
         -moz-transition: transform 500ms;
       }
 
+      #progress {
+        height: 0.5vmax;
+        width: 0%;
+        margin:0;
+        padding: 0;
+        margin-top: -7px;
+        background-color: #FAFAFA;
+      }
+
+      @media only screen
+        and (min-device-width : 768px)
+        and (max-device-width : 1024px)  {
+
+        #help {
+          margin-top: 7vh;
+          margin-bottom: 2vh;
+        }
+      }
       @media only screen
         and (min-device-width: 320px)
         and (max-device-width: 568px)
@@ -117,18 +140,21 @@
           }
           #spin {
             font-size: 5vw;
-            left: 48vw;
+            left: 49vw;
+            top: 10vh;
           }
 
           #help {
             font-size: 1.7vmax;
             padding-top: 3vh;
-            margin-top: 2vh;
+            margin-top: 9vh;
+            margin-bottom: 2vh;
           }
 
           #canvas {
             width: 100vw;
           }
+
       }
 
     </style>
@@ -143,15 +169,14 @@
         <img id="image2" src="./assets/flowers-02.png">
     </div>
     <div id="help">
-      <div id="help-text">CLICK ON THE IMAGE TO START</div><br>
-      <i class="fa fa-arrow-down"></i>
+      <div id="help-text">CLICK ON THE IMAGE TO START</div><br><br>
     </div>
     <a id="screen"></a>
-    <i class="fa fa-cog fa-spin" id="spin" aria-hidden="true"></i>
-    <!-- <div id="fake"></div> -->
+    <i class="fa fa-circle-o-notch fa-spin" id="spin" aria-hidden="true"></i>
     <br>
     <div class="container waves-effect">
       <canvas id="canvas"></canvas>
+      <div id="progress"></div>
     </div>
     <br><br>
     <div id="icons">
