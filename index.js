@@ -17,6 +17,7 @@ var container;
 var help;
 var helpText;
 var saveCircle;
+var save;
 
 var isMobileOrTablet = bowser.mobile || bowser.tablet;
 
@@ -219,17 +220,34 @@ window.onload = function () {
       waves.ripple(element);
     });
   });
+
   container = document.getElementsByClassName('container')[0];
   help = document.getElementById('help');
   helpText = document.getElementById('help-text');
   saveCircle = document.getElementById('save-circle');
+  save = document.getElementById('save');
+
+  save.addEventListener('click', function () {
+    screenshot(canvas);
+  });
 
   if (isMobileOrTablet) {
     helpText.innerHTML = 'TAP THE IMAGE TO START';
   }
+
+  flashText();
+
   help.style.opacity = 1;
 
 };
+
+function flashText() {
+  var currentColor = '#9E9E9E';
+  helpText.style.color = 'white';
+  setTimeout(function () {
+    helpText.style.color = currentColor;
+  }, 500);
+}
 
 var src = images[currentImageIndex].src;
 image.src = src;
@@ -273,6 +291,7 @@ canvas.addEventListener('click', function (e) {
     } else {
       helpText.innerHTML = 'CLICK AGAIN TO RESET';
     }
+    flashText();
   } else {
     paused = false;
     if (isMobileOrTablet) {
@@ -280,11 +299,13 @@ canvas.addEventListener('click', function (e) {
     } else {
       helpText.innerHTML = 'MOVE THE MOUSE TO EFFECT';
     }
+    flashText();
     start = true;
   }
 
   if (isMobileOrTablet && !melting && (clicks % 3) === 0) {
     helpText.innerHTML = 'TAP ON THE IMAGE TO START';
+    flashText();
     help.style.opacity = 0;
     spin.style.opacity = 1.0;
     setTimeout(function () {
@@ -301,6 +322,7 @@ canvas.addEventListener('click', function (e) {
 
   } else if (!melting && (clicks % 3) === 0) {
     helpText.innerHTML = 'CLICK ON THE IMAGE TO START';
+    flashText();
     image = selectNextImage(images);
     ctx.drawImage(image, 0, 0, w, w);
     drawText();
@@ -375,17 +397,18 @@ function melt(p, n) {
   canvas.style.cursor = 'ew-resize';
 }
 
-document.getElementById('save').addEventListener('click', function () {
-  screenshot(canvas);
-});
 
 function indicateDone() {
   saveCircle.style.color = '#9E9E9E';
+  save.style.transform = 'scale(1.2)';
   once = false;
+  setTimeout(function () {
+    save.style.transform = 'scale(1)';
+  }, 700);
   setTimeout(function () {
     saveCircle.style.color = '#616161';
     saveCircle.style.color = 'inherit';
-  }, 1900);
+  }, 1300);
 }
 
 
@@ -409,11 +432,14 @@ function render() {
       if (isMobileOrTablet && once) {
         helpText.innerHTML = 'DOWNLOAD THE ARTWORK';
         indicateDone();
+        flashText();
 
       } else if (once) {
         helpText.innerHTML = 'DOWNLOAD THE ARTWORK';
         indicateDone();
+        flashText();
       }
+
     }
   }
 
