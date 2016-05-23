@@ -13,6 +13,10 @@ var image1 = document.getElementById('image');
 image1.src = './assets/flowers.png';
 var image2 = document.getElementById('image2');
 image2.src = './assets/flowers-05.png';
+var container;
+var help;
+var helpText;
+var saveCircle;
 
 var isMobileOrTablet = bowser.mobile || bowser.tablet;
 
@@ -41,7 +45,7 @@ spin.style.opacity = 1.0;
 
 var fake = document.getElementById('fake');
 
-var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.2 : window.innerWidth;
+var w = window.innerWidth > window.innerHeight ? window.innerWidth / 2.3 : window.innerWidth;
 var start = false;
 var time = 0;
 var paused = true;
@@ -49,7 +53,7 @@ var melting = false;
 var currentImageIndex = 0;
 var meltSpeed = 13;
 var maxProgress = 150;
-
+var once = true;
 var clicks = 0;
 
 fake.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 21) + 'px';
@@ -198,8 +202,9 @@ function initialiseChannels() {
   ctx.drawImage(image, 0, 0, w, w);
 }
 
-image.onload = function() {
+image.onload = function () {
   spin.style.opacity = 0.0;
+
   ctx.drawImage(image, 0, 0, w, w);
   drawText();
   initialiseChannels();
@@ -207,13 +212,23 @@ image.onload = function() {
   render();
 };
 
-window.onload = function() {
-  Array.from(document.getElementsByClassName('black')).forEach(function(element) {
-    element.addEventListener('click', function(e) {
+window.onload = function () {
+  Array.from(document.getElementsByClassName('black')).forEach(function (element) {
+    element.addEventListener('click', function (e) {
       e.preventDefault();
       waves.ripple(element);
     });
   });
+  container = document.getElementsByClassName('container')[0];
+  help = document.getElementById('help');
+  helpText = document.getElementById('help-text');
+  saveCircle = document.getElementById('save-circle');
+
+  if (isMobileOrTablet) {
+    helpText.innerHTML = 'TAP THE IMAGE TO START';
+  }
+  help.style.opacity = 1;
+
 };
 
 var src = images[currentImageIndex].src;
@@ -223,8 +238,8 @@ var startTime = Date.now();
 
 if (isMobileOrTablet) {
   spin.style.display = 'block';
-  fake.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 15) + 'px';
-  maxProgress += 50;
+  fake.style['margin-top'] = (window.innerHeight / 2) - (w / 2) - (window.innerHeight / 13) + 'px';
+  maxProgress += 100;
 }
 
 function selectNextImage(images) {
@@ -233,13 +248,14 @@ function selectNextImage(images) {
   return images[index];
 }
 
-canvas.addEventListener('click', function(e) {
+canvas.addEventListener('click', function (e) {
   clicks++;
   time = 0;
+  once = true;
 
   e.preventDefault();
 
-  waves.ripple(document.getElementsByClassName('container')[0], {
+  waves.ripple(container, {
     position: {
       x: e.offsetX,
       y: e.offsetY
@@ -251,25 +267,40 @@ canvas.addEventListener('click', function(e) {
   if (melting) {
     paused = true;
     start = false;
+    indicateDone();
+    if (isMobileOrTablet) {
+      helpText.innerHTML = 'TAP AGAIN TO RESET';
+    } else {
+      helpText.innerHTML = 'CLICK AGAIN TO RESET';
+    }
   } else {
     paused = false;
+    if (isMobileOrTablet) {
+      helpText.innerHTML = 'TOUCH AND DRAG TO EFFECT';
+    } else {
+      helpText.innerHTML = 'MOVE THE MOUSE TO EFFECT';
+    }
     start = true;
   }
 
   if (isMobileOrTablet && !melting && (clicks % 3) === 0) {
+    helpText.innerHTML = 'TAP ON THE IMAGE TO START';
+    help.style.opacity = 0;
     spin.style.opacity = 1.0;
-    setTimeout(function() {
+    setTimeout(function () {
       image = selectNextImage(images);
       ctx.drawImage(image, 0, 0, w, w);
       drawText();
-      setTimeout(initialiseChannels, 40);
+      setTimeout(initialiseChannels, 100);
       ctx.drawImage(image, 0, 0, w, w);
-      setTimeout(function() {
+      setTimeout(function () {
         spin.style.opacity = 0.0;
-      }, 200);
+        help.style.opacity = 1;
+      }, 300);
     }, 50);
 
   } else if (!melting && (clicks % 3) === 0) {
+    helpText.innerHTML = 'CLICK ON THE IMAGE TO START';
     image = selectNextImage(images);
     ctx.drawImage(image, 0, 0, w, w);
     drawText();
@@ -278,16 +309,16 @@ canvas.addEventListener('click', function(e) {
   }
 });
 
-canvas.addEventListener('mousemove', function(e) {
+canvas.addEventListener('mousemove', function (e) {
   mouseX = e.clientX - e.target.offsetLeft + 1;
   mouseY = e.clientY - e.target.offsetLeft + 1;
 });
 
-document.addEventListener('mousemove', function(e) {
+document.addEventListener('mousemove', function (e) {
   rawMouseX = e.clientX;
   rawMouseY = e.clientY;
 });
-canvas.addEventListener('touchmove', function(e) {
+canvas.addEventListener('touchmove', function (e) {
   mouseX = e.touches[0].clientX - e.target.offsetLeft - 1;
   e.preventDefault();
 });
@@ -338,15 +369,25 @@ function melt(p, n) {
   ctx.globalAlpha = randomF(0.2, 0.3);
   ctx.drawImage(darkPixels, n + randomF(-1, 1) + (mouseX / (w / randomF(2, 8))), p, w, w);
 
-  ctx.globalAlpha = (p / maxProgress) / 3;
+  ctx.globalAlpha = (p / maxProgress) / 4;
   ctx.drawImage(bluePixels, 0, (p / 2.5) + n + randomF(0, 10), w, w);
 
   canvas.style.cursor = 'ew-resize';
 }
 
-document.getElementById('save').addEventListener('click', function() {
+document.getElementById('save').addEventListener('click', function () {
   screenshot(canvas);
 });
+
+function indicateDone() {
+  saveCircle.style.color = '#9E9E9E';
+  once = false;
+  setTimeout(function () {
+    saveCircle.style.color = '#616161';
+    saveCircle.style.color = 'inherit';
+  }, 1900);
+}
+
 
 function render() {
   var p = ((Date.now() - startTime) / 1000) * meltSpeed;
@@ -365,6 +406,14 @@ function render() {
     canvas.style.cursor = 'pointer';
     if (clicks !== 0 && !paused && (clicks % 3) !== 0) {
       clicks = 2;
+      if (isMobileOrTablet && once) {
+        helpText.innerHTML = 'DOWNLOAD THE ARTWORK';
+        indicateDone();
+
+      } else if (once) {
+        helpText.innerHTML = 'DOWNLOAD THE ARTWORK';
+        indicateDone();
+      }
     }
   }
 

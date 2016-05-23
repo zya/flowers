@@ -11,6 +11,7 @@
         background-color: #1a1a1a;
         color: white;
         margin: 0;
+        padding: 0;
         overflow-x: hidden;
       }
 
@@ -25,7 +26,7 @@
         position: fixed;
         opacity: 1;
         top: 50px;
-        left: 49vw;
+        left: 49.5vw;
         transition: opacity 300ms;
       }
 
@@ -61,10 +62,29 @@
       .icon:hover {
         color: #9E9E9E;
         cursor: pointer;
+        text-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
       }
 
-      .icon:hover {
-        text-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+      #help {
+        font-family: 'Roboto', sans-serif;
+        color: #9E9E9E;
+        font-size: 0.9vmax;
+        padding-top: 20px;
+        margin-bottom: -35px;
+        transition: opacity 800ms;
+        opacity: 0;
+      }
+
+      #help-text {
+        margin-bottom: -10px;
+      }
+
+      #save-circle {
+        transition: color 1200ms;
+      }
+
+      #sc-circle {
+        transition: color 1200ms;
       }
 
       @media only screen
@@ -80,18 +100,31 @@
           }
           #spin {
             font-size: 5vw;
+            left: 48vw;
+          }
+
+          #help {
+            font-size: 1.7vmax;
+            padding-top: 3vh;
+            margin-bottom: -8vh;
+            margin-top: 2vh;
           }
       }
 
     </style>
     <link rel="stylesheet" href="./assets/css/font-awesome.min.css">
     <link rel="stylesheet" href="./assets/css/waves.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
     <div style="display:none;">
         <img id="image" src="./assets/flowers.png">
         <img id="image2" src="./assets/flowers-02.png">
+    </div>
+    <div id="help">
+      <div id="help-text">CLICK ON THE IMAGE TO START</div><br>
+      <i class="fa fa-arrow-down"></i>
     </div>
     <a id="screen"></a>
     <i class="fa fa-cog fa-spin" id="spin" aria-hidden="true"></i>
@@ -102,19 +135,14 @@
     <br><br>
     <div id="icons">
       <span class="fa-stack icon">
-        <i class="fa fa-circle fa-stack-2x ic"></i>
+        <i class="fa fa-circle fa-stack-2x ic" id="sc-circle"></i>
         <i class="fa fa-soundcloud fa-stack-1x black waves-effect"></i>
       </span>
-      &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;
       <span class="fa-stack icon" id="save">
-        <i class="fa fa-circle fa-stack-2x ic"></i>
+        <i class="fa fa-circle fa-stack-2x ic" id="save-circle"></i>
         <i class="fa fa-floppy-o fa-stack-1x black waves-effect"></i>
       </span>
-      <!-- &nbsp;&nbsp;&nbsp;
-      <span class="fa-stack icon">
-        <i class="fa fa-circle fa-stack-2x ic"></i>
-        <i class="fa fa-info fa-stack-1x fa-inverse black"></i>
-      </span> -->
     </div>
 </body>
 <script src="./build/bundle.js"></script>
