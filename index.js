@@ -18,7 +18,9 @@ var help;
 var helpText;
 var saveCircle;
 var save;
+var play;
 var progress;
+var audio;
 
 var isMobileOrTablet = bowser.mobile || bowser.tablet;
 
@@ -230,7 +232,27 @@ window.onload = function () {
   helpText = document.getElementById('help-text');
   saveCircle = document.getElementById('save-circle');
   save = document.getElementById('save');
+  play = document.getElementById('play');
   progress = document.getElementById('progress');
+  audio = document.getElementById('audio');
+
+  audio.addEventListener('canplay', function () {
+    play.classList.remove('fa-circle-o-notch');
+    play.classList.remove('fa-spin');
+    play.classList.add('fa-headphones');
+
+    play.addEventListener('click', function () {
+      if (this.classList.contains('fa-headphones')) {
+        this.classList.remove('fa-headphones');
+        this.classList.add('fa-stop');
+        audio.play();
+      } else {
+        this.classList.remove('fa-stop');
+        this.classList.add('fa-headphones');
+        audio.pause();
+      }
+    });
+  });
 
   save.addEventListener('click', function () {
     screenshot(canvas);
