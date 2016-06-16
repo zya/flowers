@@ -15,12 +15,13 @@
   },
   "devDependencies": {
     "browserify": "^13.0.0",
+    "uglify-js": "^2.6.2",
     "watchify": "^3.7.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "watchify index.js -o ./build/bundle.js",
-    "build": "browserify index.js -o ./build/bundle.js",
+    "watch": "watchify index.js -o 'uglifyjs -mc > ./build/bundle.js'",
+    "build": "browserify index.js | uglifyjs -mc > ./build/bundle.js",
     "update-pages": "git checkout gh-pages && git rebase master && git push origin gh-pages && git checkout master"
   },
   "author": "",
