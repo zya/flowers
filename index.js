@@ -47,7 +47,7 @@ text.src = './assets/text.png';
 var spin = document.getElementById('spin');
 spin.style.opacity = 1.0;
 
-var w = canvas.getBoundingClientRect().width * 1.3;
+var w = canvas.getBoundingClientRect().width * 1.7;
 var start = false;
 var time = 0;
 var paused = true;
@@ -442,6 +442,23 @@ function indicateDone() {
 }
 
 
+var gif = new GIF({
+  workers: 5,
+  quality: 2,
+  width: canvas.width,
+  height: canvas.height,
+  workerScript: './build/gif.worker.js'
+});
+
+gif.on('finished', function (blob) {
+  console.log('test');
+  window.open(URL.createObjectURL(blob));
+});
+
+window.gif = gif;
+
+var i = 0;
+
 function render() {
   var p = ((Date.now() - startTime) / 1000) * meltSpeed;
 
@@ -454,7 +471,16 @@ function render() {
   if (p < maxProgress && !paused && start && (clicks % 3) !== 0) {
     melting = true;
     melt(p, n);
+
+    if (i % 10 === 0) {
+      gif.addFrame(ctx, {
+        copy: true,
+        delay: 80
+      });
+    }
+    i++;
   } else {
+    i = 0;
     melting = false;
     canvas.style.cursor = 'pointer';
     if (clicks !== 0 && !paused && (clicks % 3) !== 0) {
@@ -472,5 +498,7 @@ function render() {
   }
 
   drawText();
-  requestAnimationFrame(render);
+  // requestAnimationFrame(render);
 }
+
+setInterval(render, 50);
