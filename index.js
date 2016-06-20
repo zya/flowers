@@ -70,7 +70,7 @@ function between(x, min, max) {
 function flashText() {
   var currentColor = '#9E9E9E';
   helpText.style.color = 'white';
-  setTimeout(function () {
+  setTimeout(function() {
     helpText.style.color = currentColor;
   }, 500);
 }
@@ -212,7 +212,7 @@ function initialiseChannels() {
   ctx.drawImage(image, 0, 0, w, w);
 }
 
-image.onload = function () {
+image.onload = function() {
   spin.style.opacity = 0.0;
   ctx.drawImage(image, 0, 0, w, w);
   drawText();
@@ -221,9 +221,9 @@ image.onload = function () {
   render();
 };
 
-window.onload = function () {
-  Array.from(document.getElementsByClassName('black')).forEach(function (element) {
-    element.addEventListener('click', function (e) {
+window.onload = function() {
+  Array.from(document.getElementsByClassName('black')).forEach(function(element) {
+    element.addEventListener('click', function(e) {
       e.preventDefault();
       waves.ripple(element);
     });
@@ -238,12 +238,17 @@ window.onload = function () {
   progress = document.getElementById('progress');
   audio = document.getElementById('audio');
 
-  audio.addEventListener('canplay', function () {
+  audio.load();
+  audio.onstalled = function() {
+    audio.load();
+  };
+
+  audio.addEventListener('canplay', function() {
     play.classList.remove('fa-circle-o-notch');
     play.classList.remove('fa-spin');
     play.classList.add('fa-headphones');
 
-    play.addEventListener('click', function () {
+    play.addEventListener('click', function() {
       if (this.classList.contains('fa-headphones')) {
         this.classList.remove('fa-headphones');
         this.classList.add('fa-stop');
@@ -256,7 +261,7 @@ window.onload = function () {
     });
   });
 
-  save.addEventListener('click', function () {
+  save.addEventListener('click', function() {
     screenshot(canvas);
   });
 
@@ -267,7 +272,7 @@ window.onload = function () {
   flashText();
   help.style.opacity = 1;
 
-  canvas.addEventListener('click', function (e) {
+  canvas.addEventListener('click', function(e) {
     clicks++;
     time = 0;
     once = true;
@@ -309,14 +314,14 @@ window.onload = function () {
       helpText.innerHTML = 'TAP ON THE IMAGE TO START';
       help.style.opacity = 0;
       spin.style.opacity = 1.0;
-      setTimeout(function () {
+      setTimeout(function() {
         image = selectNextImage(images);
         ctx.drawImage(image, 0, 0, w, w);
         drawText();
         setTimeout(initialiseChannels, 100);
         ctx.drawImage(image, 0, 0, w, w);
         progress.style.width = '0%';
-        setTimeout(function () {
+        setTimeout(function() {
           spin.style.opacity = 0.0;
           help.style.opacity = 1;
           flashText();
@@ -352,17 +357,17 @@ function selectNextImage(images) {
   return images[index];
 }
 
-canvas.addEventListener('mousemove', function (e) {
+canvas.addEventListener('mousemove', function(e) {
   mouseX = e.offsetX * 1.3;
   mouseX -= (w / 2);
   mouseY = e.clientY - e.target.offsetLeft + 1;
 });
 
-document.addEventListener('mousemove', function (e) {
+document.addEventListener('mousemove', function(e) {
   rawMouseX = e.clientX;
   rawMouseY = e.clientY;
 });
-canvas.addEventListener('touchmove', function (e) {
+canvas.addEventListener('touchmove', function(e) {
   mouseX = e.touches[0].clientX * 1.3;
   mouseX -= (w / 2);
   e.preventDefault();
@@ -434,10 +439,10 @@ function indicateDone() {
   saveCircle.style.color = '#9E9E9E';
   save.style.transform = 'scale(1.2)';
   once = false;
-  setTimeout(function () {
+  setTimeout(function() {
     save.style.transform = 'scale(1)';
   }, 700);
-  setTimeout(function () {
+  setTimeout(function() {
     saveCircle.style.color = '#616161';
     saveCircle.style.color = 'inherit';
   }, 1300);
