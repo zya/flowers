@@ -49,7 +49,6 @@ spin.style.opacity = 1.0;
 
 var w = canvas.getBoundingClientRect().width * 1.3;
 if (w < 900) w = 900;
-console.log(w);
 
 var start = false;
 var time = 0;
